@@ -11,6 +11,7 @@
     "rxjs": "~7.8.0"
   },
   "devDependencies": {
+    "@nativescript/android": "8.9.1",
     "@nativescript/webpack": "~5.0.0",
     "nativescript-vue-template-compiler": "~2.9.3"
   }

@@ -26,7 +26,7 @@
     },
     computed: {
       message() {
-        return "<!-- Page content goes here -->";
+        return "Agrosense App";
       }
     },
     methods: {

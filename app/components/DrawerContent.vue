@@ -16,17 +16,17 @@
                 </GridLayout>
 
                 <GridLayout columns="auto, *"
-                            :class="'nt-drawer__list-item' + (selectedPage === 'Browse' ? ' -selected': '')"
-                            @tap="onNavigationItemTap(Browse)">
-                    <Label col="0" text.decode="&#xf1ea;" class="nt-icon far"/>
-                    <Label col="1" text="Browse" class="p-r-10"/>
+                            :class="'nt-drawer__list-item' + (selectedPage === 'Farms' ? ' -selected': '')"
+                            @tap="onNavigationItemTap(Farms)">
+                    <Label col="0" text.decode="&#xf722;" class="nt-icon fas"/> <!-- Updated icon -->
+                    <Label col="1" text="My Farms" class="p-r-10"/>
                 </GridLayout>
 
                 <GridLayout columns="auto, *"
-                            :class="'nt-drawer__list-item' + (selectedPage === 'Search' ? ' -selected': '')"
-                            @tap="onNavigationItemTap(Search)">
-                    <Label col="0" text.decode="&#xf002;" class="nt-icon fas"/>
-                    <Label col="1" text="Search" class="p-r-10"/>
+                            :class="'nt-drawer__list-item' + (selectedPage === 'Sensors' ? ' -selected': '')"
+                            @tap="onNavigationItemTap(Sensors)">
+                    <Label col="0" text.decode="&#xf2db;" class="nt-icon fas"/> <!-- Updated icon -->
+                    <Label col="1" text="Sensors" class="p-r-10"/>
                 </GridLayout>
 
                 <GridLayout columns="auto, *"
@@ -51,9 +51,9 @@
 
 <script>
   import Home from "./Home";
-  import Browse from "./Browse";
+  import Farms from "./Farms";
   import Featured from "./Featured";
-  import Search from "./Search";
+  import Sensors from "./Sensors";
   import Settings from "./Settings";
   import * as utils from "~/shared/utils";
   import { SelectedPageService } from "~/shared/selected-page-service";
@@ -66,18 +66,18 @@
     data() {
       return {
         Home: Home,
-        Browse: Browse,
+        Farms: Farms,
         Featured: Featured,
-        Search: Search,
+        Sensors: Sensors,
         Settings: Settings,
         selectedPage: ""
       };
     },
     components: {
       Home,
-      Browse,
+      Farms,
       Featured,
-      Search,
+      Sensors,
       Settings
     },
     methods: {

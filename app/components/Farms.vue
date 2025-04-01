@@ -3,14 +3,14 @@
       <ActionBar class="action-bar">
         <NavigationButton visibility="hidden"/>
         <GridLayout columns="50, *">
-          <Label class="action-bar-title" text="Search" colSpan="2"/>
+          <Label class="action-bar-title" text="Farms" colSpan="2"/>
 
           <Label class="fas" text.decode="&#xf0c9;" @tap="onDrawerButtonTap"/>
         </GridLayout>
       </ActionBar>
 
         <GridLayout class="page__content">
-            <Label class="page__content-icon fas" text.decode="&#xf002;"/>
+            <Label class="page__content-icon far" text.decode="&#xf1ea;"/>
             <Label class="page__content-placeholder" :text="message"/>
         </GridLayout>
     </Page>
@@ -22,7 +22,7 @@
 
   export default {
     mounted() {
-      SelectedPageService.getInstance().updateSelectedPage("Search");
+      SelectedPageService.getInstance().updateSelectedPage("Farms");
     },
     computed: {
       message() {
