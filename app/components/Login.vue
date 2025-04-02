@@ -23,6 +23,7 @@
 <script>
   import * as utils from "~/shared/utils";
   import { SelectedPageService } from "../shared/selected-page-service";
+  import { AuthService } from "../shared/auth-service"; // Import the AuthService
   import Home from "./Home"; // Import the Home component
 
   const BASE_URL = "http://10.0.2.2:8000"; // Replace with your backend URL
@@ -36,7 +37,6 @@
         email: "",
         password: "",
         errorMessage: "",
-        token: null,
       };
     },
     methods: {
@@ -58,7 +58,7 @@
           const data = await response.json();
           console.log("Login Response:", data);
           if (data.token) {
-            this.token = data.token; // Save the token for authenticated requests
+            AuthService.setToken(data.token); // Save the token in the shared service
             alert("Login successful!");
             // Navigate to the Home page
             this.$navigateTo(Home);
