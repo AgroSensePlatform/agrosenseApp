@@ -10,7 +10,16 @@
       </ActionBar>
 
       <GridLayout class="page__content">
+
+        <StackLayout>
+          <Button v-if="isLoggedIn" text="Add Farm" class="add-farm-button" @tap="navigateToAddFarm"/>
+        </StackLayout>
+
+
+        <!-- Placeholder for non-logged-in users -->
         <Label v-if="!isLoggedIn" class="page__content-placeholder" text="Please log in to view your farms."/>
+
+        <!-- Farms List -->
         <ListView v-else for="farm in farms" class="page__content-list">
           <v-template>
             <StackLayout class="page__content-list-item">
@@ -27,6 +36,7 @@
   import * as utils from "~/shared/utils";
   import { SelectedPageService } from "../shared/selected-page-service";
   import { AuthService } from "../shared/auth-service"; // Import AuthService for token management
+  import AddFarm from "./AddFarm"; // Import the AddFarm component
 
   const BASE_URL = "http://10.0.2.2:8000"; // Replace with your backend URL
 
@@ -79,6 +89,9 @@
           console.error("Error fetching farms:", error);
         }
       },
+      navigateToAddFarm() {
+        this.$navigateTo(AddFarm); // Navigate to the AddFarm page
+      },
     },
   };
 </script>
@@ -93,7 +106,7 @@
     }
 
     .page__content-list {
-        margin-top: 20;
+        margin-top: 50;
     }
 
     .page__content-list-item {
@@ -110,5 +123,15 @@
     .farm-coordinates {
         font-size: 14;
         color: #666;
+    }
+
+    .add-farm-button {
+        margin-bottom: 50;
+        font-size: 18;
+        background-color: #007bff;
+        color: white;
+        padding: 10;
+        border-radius: 5;
+        text-align: center;
     }
 </style>
