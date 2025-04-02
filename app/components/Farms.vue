@@ -36,9 +36,10 @@
   import * as utils from "~/shared/utils";
   import { SelectedPageService } from "../shared/selected-page-service";
   import { AuthService } from "../shared/auth-service"; // Import AuthService for token management
+  import { BASE_URL } from "../shared/config"; // Import BASE_URL from the shared config
+
   import AddFarm from "./AddFarm"; // Import the AddFarm component
 
-  const BASE_URL = "http://10.0.2.2:8000"; // Replace with your backend URL
 
   export default {
     data() {

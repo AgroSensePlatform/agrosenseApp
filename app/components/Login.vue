@@ -25,8 +25,9 @@
   import { SelectedPageService } from "../shared/selected-page-service";
   import { AuthService } from "../shared/auth-service"; // Import the AuthService
   import Home from "./Home"; // Import the Home component
+  import { BASE_URL } from "../shared/config"; // Import BASE_URL from the shared config
 
-  const BASE_URL = "http://10.0.2.2:8000"; // Replace with your backend URL
+
 
   export default {
     mounted() {
