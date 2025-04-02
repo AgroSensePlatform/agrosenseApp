@@ -13,7 +13,7 @@
         <StackLayout class="form">
           <TextField v-model="email" hint="Email" keyboardType="email" autocorrect="false" autocapitalizationType="none" />
           <TextField v-model="password" hint="Password" secure="true" />
-          <Button text="Login User" class="btn btn-primary" @tap="loginUser" />
+          <Button text="Login" class="btn btn-primary" @tap="loginUser" />
           <Label v-if="errorMessage" class="error-message" :text="errorMessage" />
         </StackLayout>
       </GridLayout>
@@ -23,6 +23,7 @@
 <script>
   import * as utils from "~/shared/utils";
   import { SelectedPageService } from "../shared/selected-page-service";
+  import Home from "./Home"; // Import the Home component
 
   const BASE_URL = "http://10.0.2.2:8000"; // Replace with your backend URL
 
@@ -35,7 +36,7 @@
         email: "",
         password: "",
         errorMessage: "",
-        token: null
+        token: null,
       };
     },
     methods: {
@@ -59,8 +60,8 @@
           if (data.token) {
             this.token = data.token; // Save the token for authenticated requests
             alert("Login successful!");
-            // Navigate to another page if needed
-            this.$navigateTo(Home); // Replace `Home` with your desired component
+            // Navigate to the Home page
+            this.$navigateTo(Home);
           } else {
             this.errorMessage = "Login failed. Please check your credentials.";
           }
@@ -68,8 +69,8 @@
           console.error("Error logging in:", error);
           this.errorMessage = "An error occurred while logging in.";
         }
-      }
-    }
+      },
+    },
   };
 </script>
 
