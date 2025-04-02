@@ -2,12 +2,13 @@
     <GridLayout rows="auto, *" class="nt-drawer__content">
         <StackLayout row="0" class="nt-drawer__header">
             <Image class="nt-drawer__header-image fas t-36" src.decode="font://&#xf2bd;"/>
-            <Label class="nt-drawer__header-brand" text="User Name"/>
-            <Label class="nt-drawer__header-footnote" text="username@mail.com"/>
+            <Label class="nt-drawer__header-brand" :text="userName || 'User Name'"/> <!-- Dynamically display user name -->
+            <Label class="nt-drawer__header-footnote" :text="userEmail || 'username@mail.com'"/> <!-- Dynamically display user email -->
         </StackLayout>
 
         <ScrollView row="1" class="nt-drawer__body">
             <StackLayout>
+                <!-- Navigation items -->
                 <GridLayout columns="auto, *"
                             :class="'nt-drawer__list-item' + (selectedPage === 'Home' ? ' -selected': '')"
                             @tap="onNavigationItemTap(Home)">
@@ -38,27 +39,21 @@
 
                 <StackLayout class="hr"/>
 
-                <GridLayout columns="auto, *"
-                            :class="'nt-drawer__list-item' + (selectedPage === 'Settings' ? ' -selected': '')"
-                            @tap="onNavigationItemTap(Settings)">
-                    <Label col="0" text.decode="&#xf013;" class="nt-icon fas"/>
-                    <Label col="1" text="Settings" class="p-r-10"/>
-                </GridLayout>
-                <GridLayout columns="auto, *"
+                <GridLayout v-if="!isLoggedIn" columns="auto, *"
                             :class="'nt-drawer__list-item' + (selectedPage === 'Login' ? ' -selected': '')"
                             @tap="onNavigationItemTap(Login)">
                     <Label col="0" text.decode="&#xf2f6;" class="nt-icon fas"/> <!-- Login icon -->
                     <Label col="1" text="Login" class="p-r-10"/>
                 </GridLayout>
 
-                <GridLayout columns="auto, *"
+                <GridLayout v-if="isLoggedIn" columns="auto, *"
                             :class="'nt-drawer__list-item' + (selectedPage === 'MyAccount' ? ' -selected': '')"
                             @tap="onNavigationItemTap(MyAccount)">
                     <Label col="0" text.decode="&#xf406;" class="nt-icon fas"/> <!-- My Account icon -->
                     <Label col="1" text="My Account" class="p-r-10"/>
                 </GridLayout>
 
-                <GridLayout columns="auto, *"
+                <GridLayout v-if="isLoggedIn" columns="auto, *"
                             :class="'nt-drawer__list-item' + (selectedPage === 'Logout' ? ' -selected': '')"
                             @tap="onNavigationItemTap(Logout)">
                     <Label col="0" text.decode="&#xf2f5;" class="nt-icon fas"/> <!-- Logout icon -->
@@ -80,11 +75,23 @@
   import Logout from "./Logout";
   import * as utils from "~/shared/utils";
   import { SelectedPageService } from "~/shared/selected-page-service";
+  import { AuthService } from "~/shared/auth-service"; // Import AuthService for token management
+
+  const BASE_URL = "http://10.0.2.2:8000"; // Replace with your backend URL
 
   export default {
     mounted() {
       SelectedPageService.getInstance().selectedPage$
         .subscribe((selectedPage) => this.selectedPage = selectedPage);
+
+      this.fetchUserDetails(); // Fetch user details when the component is mounted
+
+      // Listen for the user-logged-in event
+      this.$root.$on("user-logged-in", this.fetchUserDetails);
+    },
+    beforeDestroy() {
+      // Clean up the event listener
+      this.$root.$off("user-logged-in", this.fetchUserDetails);
     },
     data() {
       return {
@@ -96,8 +103,15 @@
         Login: Login,
         MyAccount: MyAccount,
         Logout: Logout,
-        selectedPage: ""
+        selectedPage: "",
+        userName: null, // Store the user's name
+        userEmail: null, // Store the user's email
       };
+    },
+    computed: {
+      isLoggedIn() {
+        return !!AuthService.getToken(); // Check if a token exists
+      },
     },
     components: {
       Home,
@@ -115,8 +129,35 @@
           clearHistory: true
         });
         utils.closeDrawer();
-      }
-    }
+      },
+      async fetchUserDetails() {
+        try {
+          const token = AuthService.getToken(); // Get the token from AuthService
+          if (!token) {
+            console.warn("No token found. User is not logged in.");
+            return;
+          }
+
+          const response = await fetch(`${BASE_URL}/api/user`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+            this.userName = userData.name; // Update the user's name
+            this.userEmail = userData.email; // Update the user's email
+          } else {
+            console.error("Failed to fetch user details:", await response.text());
+          }
+        } catch (error) {
+          console.error("Error fetching user details:", error);
+        }
+      },
+    },
   };
 </script>
 

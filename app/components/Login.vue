@@ -59,9 +59,9 @@
           console.log("Login Response:", data);
           if (data.token) {
             AuthService.setToken(data.token); // Save the token in the shared service
+            this.$emit("user-logged-in"); // Emit an event to notify other components
             alert("Login successful!");
-            // Navigate to the Home page
-            this.$navigateTo(Home);
+            this.$navigateTo(Home); // Navigate to the Home page
           } else {
             this.errorMessage = "Login failed. Please check your credentials.";
           }
