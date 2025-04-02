@@ -44,6 +44,26 @@
                     <Label col="0" text.decode="&#xf013;" class="nt-icon fas"/>
                     <Label col="1" text="Settings" class="p-r-10"/>
                 </GridLayout>
+                <GridLayout columns="auto, *"
+                            :class="'nt-drawer__list-item' + (selectedPage === 'Login' ? ' -selected': '')"
+                            @tap="onNavigationItemTap(Login)">
+                    <Label col="0" text.decode="&#xf2f6;" class="nt-icon fas"/> <!-- Login icon -->
+                    <Label col="1" text="Login" class="p-r-10"/>
+                </GridLayout>
+
+                <GridLayout columns="auto, *"
+                            :class="'nt-drawer__list-item' + (selectedPage === 'MyAccount' ? ' -selected': '')"
+                            @tap="onNavigationItemTap(MyAccount)">
+                    <Label col="0" text.decode="&#xf406;" class="nt-icon fas"/> <!-- My Account icon -->
+                    <Label col="1" text="My Account" class="p-r-10"/>
+                </GridLayout>
+
+                <GridLayout columns="auto, *"
+                            :class="'nt-drawer__list-item' + (selectedPage === 'Logout' ? ' -selected': '')"
+                            @tap="onNavigationItemTap(Logout)">
+                    <Label col="0" text.decode="&#xf2f5;" class="nt-icon fas"/> <!-- Logout icon -->
+                    <Label col="1" text="Logout" class="p-r-10"/>
+                </GridLayout>
             </StackLayout>
         </ScrollView>
     </GridLayout>
@@ -55,6 +75,9 @@
   import Featured from "./Featured";
   import Sensors from "./Sensors";
   import Settings from "./Settings";
+  import Login from "./Login";
+  import MyAccount from "./MyAccount";
+  import Logout from "./Logout";
   import * as utils from "~/shared/utils";
   import { SelectedPageService } from "~/shared/selected-page-service";
 
@@ -70,6 +93,9 @@
         Featured: Featured,
         Sensors: Sensors,
         Settings: Settings,
+        Login: Login,
+        MyAccount: MyAccount,
+        Logout: Logout,
         selectedPage: ""
       };
     },
@@ -78,7 +104,10 @@
       Farms,
       Featured,
       Sensors,
-      Settings
+      Settings,
+      Login,
+      MyAccount,
+      Logout
     },
     methods: {
       onNavigationItemTap(component) {
