@@ -138,6 +138,12 @@
             return;
           }
 
+          // If user details are already fetched, skip the server request
+          if (this.userName && this.userEmail) {
+            console.log("User details already fetched. Skipping server request.");
+            return;
+          }
+
           const response = await fetch(`${BASE_URL}/api/user`, {
             method: "GET",
             headers: {
