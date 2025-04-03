@@ -39,7 +39,7 @@
 
                 <StackLayout class="hr"/>
 
-                <GridLayout  columns="auto, *"
+                <GridLayout v-if="!isLoggedIn"  columns="auto, *"
                             :class="'nt-drawer__list-item' + (selectedPage === 'Login' ? ' -selected': '')"
                             @tap="onNavigationItemTap(Login)">
                     <Label col="0" text.decode="&#xf2f6;" class="nt-icon fas"/> <!-- Login icon -->
@@ -53,7 +53,7 @@
                     <Label col="1" text="My Account" class="p-r-10"/>
                 </GridLayout>
 
-                <GridLayout  columns="auto, *"
+                <GridLayout  v-if="isLoggedIn" columns="auto, *"
                             :class="'nt-drawer__list-item' + (selectedPage === 'Logout' ? ' -selected': '')"
                             @tap="onNavigationItemTap(Logout)">
                     <Label col="0" text.decode="&#xf2f5;" class="nt-icon fas"/> <!-- Logout icon -->
@@ -86,16 +86,8 @@
         .subscribe((selectedPage) => this.selectedPage = selectedPage);
 
       this.fetchUserDetails(); // Fetch user details when the component is mounted
+    },
 
-      // Listen for the user-logged-in event
-      this.$root.$on("user-logged-in", this.handleUserLogin);
-      //this.$root.$on("user-logged-out", this.handleUserLogout); // Listen for logout event
-    },
-    beforeDestroy() {
-      // Clean up the event listener
-      this.$root.$off("user-logged-in", this.handleUserLogin);
-      //this.$root.$off("user-logged-out", this.handleUserLogout);
-    },
     data() {
       return {
         Home: Home,
@@ -161,21 +153,6 @@
         } catch (error) {
           console.error("Error fetching user details:", error);
         }
-      },
-      handleUserLogout() {
-        //log a message
-        console.log("User logged out. Clearing user details.");
-        // Clear user details and update the UI
-        this.userName = null;
-        this.userEmail = null;
-        this.selectedPage = "Home"; // Optionally reset the selected page
-        this.isLoggedInState = false; // Update the reactive login state
-      },
-      handleUserLogin() {
-        //log a message
-        alert("User logged in. Fetching user details.");
-        console.log("User logged in. Fetching user details.");
-        this.fetchUserDetails();
       },
     },
   };

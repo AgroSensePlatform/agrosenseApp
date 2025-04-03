@@ -56,7 +56,7 @@
             AuthService.setToken(null);
 
             // Emit an event to notify other components (e.g., DrawerContent)
-            this.$root.$emit("user-logged-out");
+            //this.$root.$emit("user-logged-out");
 
             alert("Logged out successfully!");
             // Navigate to the Home page
