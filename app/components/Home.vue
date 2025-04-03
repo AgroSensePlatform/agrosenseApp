@@ -86,18 +86,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  // Start custom common variables
-  @import '@nativescript/theme/scss/variables/blue';
-  // End custom common variables
+  @import '~/styles/variables/green'; // Import your custom green theme
 
-  // Custom styles
   .btn {
       margin: 10px;
+      background-color: $primary; // Use the green primary color
+      color: white;
   }
 
   .coords-label {
       margin-top: 10px;
       font-size: 16px;
-      color: #333;
+      color: $text-color; // Use the green text color
   }
 </style>

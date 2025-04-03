@@ -15,7 +15,6 @@
           <Button v-if="isLoggedIn" text="Add Farm" class="add-farm-button" @tap="navigateToAddFarm"/>
         </StackLayout>
 
-
         <!-- Placeholder for non-logged-in users -->
         <Label v-if="!isLoggedIn" class="page__content-placeholder" text="Please log in to view your farms."/>
 
@@ -39,7 +38,6 @@
   import { BASE_URL } from "../shared/config"; // Import BASE_URL from the shared config
 
   import AddFarm from "./AddFarm"; // Import the AddFarm component
-
 
   export default {
     data() {
@@ -98,12 +96,13 @@
 </script>
 
 <style scoped lang="scss">
-    @import '@nativescript/theme/scss/variables/blue';
+    @import '~/styles/variables/green'; // Import your custom green theme
 
     .page__content-placeholder {
         font-size: 18;
         text-align: center;
         margin-top: 20;
+        color: $text-color; // Use the green text color
     }
 
     .page__content-list {
@@ -114,22 +113,23 @@
         font-size: 16;
         padding: 10;
         border-bottom-width: 1;
-        border-bottom-color: #ccc;
+        border-bottom-color: $accent; // Use the green accent color
     }
 
     .farm-name {
         font-weight: bold;
+        color: $primary; // Use the green primary color
     }
 
     .farm-coordinates {
         font-size: 14;
-        color: #666;
+        color: $text-color; // Use the green text color
     }
 
     .add-farm-button {
         margin-bottom: 50;
         font-size: 18;
-        background-color: #007bff;
+        background-color: $primary; // Use the green primary color
         color: white;
         padding: 10;
         border-radius: 5;

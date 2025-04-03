@@ -30,7 +30,7 @@
 
 <style scoped lang="scss">
     // Start custom common variables
-    @import '@nativescript/theme/scss/variables/blue';
+    @import '~/styles/variables/green';
     // End custom common variables
 
     // Custom styles
