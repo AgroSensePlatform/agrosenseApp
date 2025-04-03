@@ -16,14 +16,14 @@
                     <Label col="1" text="Home" class="p-r-10"/>
                 </GridLayout>
 
-                <GridLayout columns="auto, *"
+                <GridLayout v-if="isLoggedIn" columns="auto, *"
                             :class="'nt-drawer__list-item' + (selectedPage === 'Farms' ? ' -selected': '')"
                             @tap="onNavigationItemTap(Farms)">
                     <Label col="0" text.decode="&#xf722;" class="nt-icon fas"/> <!-- Updated icon -->
                     <Label col="1" text="My Farms" class="p-r-10"/>
                 </GridLayout>
 
-                <GridLayout columns="auto, *"
+                <GridLayout v-if="isLoggedIn" columns="auto, *"
                             :class="'nt-drawer__list-item' + (selectedPage === 'Sensors' ? ' -selected': '')"
                             @tap="onNavigationItemTap(Sensors)">
                     <Label col="0" text.decode="&#xf2db;" class="nt-icon fas"/> <!-- Updated icon -->
@@ -44,6 +44,13 @@
                             @tap="onNavigationItemTap(Login)">
                     <Label col="0" text.decode="&#xf2f6;" class="nt-icon fas"/> <!-- Login icon -->
                     <Label col="1" text="Login" class="p-r-10"/>
+                </GridLayout>
+
+                <GridLayout v-if="!isLoggedIn"  columns="auto, *"
+                            :class="'nt-drawer__list-item' + (selectedPage === 'Register' ? ' -selected': '')"
+                            @tap="onNavigationItemTap(Register)">
+                    <Label col="0" text.decode="&#xf234;" class="nt-icon fas"/> <!-- Register icon -->
+                    <Label col="1" text="Register" class="p-r-10"/>
                 </GridLayout>
 
                 <GridLayout v-if="isLoggedIn" columns="auto, *"
@@ -71,6 +78,7 @@
   import Sensors from "./Sensors";
   import Settings from "./Settings";
   import Login from "./Login";
+  import Register from "./Register";  // <-- Import
   import MyAccount from "./MyAccount";
   import Logout from "./Logout";
   import * as utils from "~/shared/utils";
@@ -94,6 +102,7 @@
         Sensors: Sensors,
         Settings: Settings,
         Login: Login,
+        Register: Register,
         MyAccount: MyAccount,
         Logout: Logout,
         selectedPage: "",
@@ -110,6 +119,7 @@
       Sensors,
       Settings,
       Login,
+      Register,  // <-- Add Register here
       MyAccount,
       Logout,
     },
