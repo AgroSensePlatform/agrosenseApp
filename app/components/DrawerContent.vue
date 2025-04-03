@@ -78,12 +78,10 @@
   import { AuthService } from "~/shared/auth-service"; // Import AuthService for token management
   import { BASE_URL } from "../shared/config"; // Import BASE_URL from the shared config
 
-
-
   export default {
     mounted() {
       SelectedPageService.getInstance().selectedPage$
-        .subscribe((selectedPage) => this.selectedPage = selectedPage);
+        .subscribe((selectedPage) => (this.selectedPage = selectedPage));
 
       this.fetchUserDetails(); // Fetch user details when the component is mounted
     },
@@ -101,13 +99,10 @@
         selectedPage: "",
         userName: null, // Store the user's name
         userEmail: null, // Store the user's email
+        isLoggedIn: false, // Reactive variable for login state
       };
     },
-    computed: {
-      isLoggedIn() {
-        return !!AuthService.getToken(); // Check if a token exists
-      },
-    },
+
     components: {
       Home,
       Farms,
@@ -116,22 +111,30 @@
       Settings,
       Login,
       MyAccount,
-      Logout
+      Logout,
     },
+
     methods: {
+      refreshState() {
+        console.log("Refreshing DrawerContent state...");
+        // Update the isLoggedIn variable based on the token
+        this.isLoggedIn = !!AuthService.getToken();
+        this.fetchUserDetails();
+      },
       onNavigationItemTap(component) {
         this.$navigateTo(component, {
-          clearHistory: true
+          clearHistory: true,
         });
         utils.closeDrawer();
       },
       async fetchUserDetails() {
-        //log a message
         console.log("Fetching user details...");
         try {
           const token = AuthService.getToken(); // Get the token from AuthService
           if (!token) {
             console.warn("No token found. User is not logged in.");
+            this.userName = null;
+            this.userEmail = null;
             return;
           }
 

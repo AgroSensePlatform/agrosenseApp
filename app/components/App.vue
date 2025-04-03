@@ -1,7 +1,7 @@
 <template lang="html">
-    <RadSideDrawer ref="drawer" drawerLocation="Left" gesturesEnabled="true" :drawerTransition="transition">
+    <RadSideDrawer ref="drawer" drawerLocation="Left" gesturesEnabled="true" @drawerOpened="onDrawerOpened" :drawerTransition="transition">
         <StackLayout ~drawerContent backgroundColor="#ffffff">
-            <DrawerContent/>
+            <DrawerContent ref="drawerContent" />
         </StackLayout>
         <Frame ~mainContent ref="drawerMainContent">
             <Home/>
@@ -13,6 +13,8 @@
   import DrawerContent from './DrawerContent'
   import Home from './Home'
   import { SlideInOnTopTransition } from 'nativescript-ui-sidedrawer';
+  import { AuthService } from "~/shared/auth-service"; // Import AuthService for token management
+
 
   export default {
     data() {
@@ -24,6 +26,21 @@
     components: {
       DrawerContent,
       Home
+    },
+
+    methods: {
+      onDrawerOpened() {
+        console.log("Drawer has fully opened");
+        // Refresh the token or state
+        const token = AuthService.getToken();
+        if (token) {
+          console.log("User is logged in");
+        } else {
+          console.log("User is not logged in");
+        }
+        // Optionally, you can emit an event to notify DrawerContent to refresh
+        this.$refs.drawerContent.refreshState();
+      }
     }
   }
 </script>
