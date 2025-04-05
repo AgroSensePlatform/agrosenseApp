@@ -50,10 +50,12 @@
       async updateUser(formData) {
         try {
           // Update user logic, e.g., via a PUT/PATCH API call
+          const token = AuthService.getToken();
           const response = await fetch(`${BASE_URL}/api/user`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(formData)
           });
