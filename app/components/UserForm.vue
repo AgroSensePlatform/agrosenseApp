@@ -38,6 +38,16 @@ export default {
       successMessage: ""
     };
   },
+  watch: {
+    initialData: {
+      handler(newVal) {
+        // Update the local form state when the prop changes
+        this.userForm = { ...newVal };
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   methods: {
     handleSubmit() {
       // Emit the current form details to the parent
