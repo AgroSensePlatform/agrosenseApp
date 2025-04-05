@@ -3,6 +3,24 @@ dependencies {
 //  implementation 'androidx.multidex:multidex:2.0.1'
 }
 
+allprojects {
+  repositories {
+       maven {
+        url 'https://api.mapbox.com/downloads/v2/releases/maven'
+        authentication {
+            basic(BasicAuthentication)
+        }
+        credentials {
+            // Do not change the username below.
+            // This should always be `mapbox` (not your username).
+            username = 'mapbox'
+            // Use the secret token you stored in gradle.properties as the password
+            password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
+        }
+    }
+  }
+}
+
 android {
   compileSdkVersion 34
   buildToolsVersion "34"
@@ -15,7 +33,7 @@ android {
     // Version Information
     versionCode 1
     versionName "1.0.0"
-    
+
     generatedDensities = []
   }
 
