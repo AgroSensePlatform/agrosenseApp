@@ -89,7 +89,7 @@
         }
       },
       navigateToAddFarm() {
-        this.$navigateTo(AddFarm); // Navigate to the AddFarm page
+        this.$navigateTo(AddFarm);
       },
     },
   };
