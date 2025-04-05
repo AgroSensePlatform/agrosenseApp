@@ -1,10 +1,16 @@
 const webpack = require("@nativescript/webpack");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = (env) => {
-	webpack.init(env);
+    webpack.init(env);
 
-	// Learn how to customize:
-	// https://docs.nativescript.org/webpack
+    webpack.chainWebpack((config) => {
+        config.plugin("dotenv").use(Dotenv, [{
+            path: "./.env", // Path to your .env file
+            safe: true,     // Optional: Load .env.example to verify required variables are set
+            systemvars: true
+        }]);
+    });
 
-	return webpack.resolveConfig();
+    return webpack.resolveConfig();
 };

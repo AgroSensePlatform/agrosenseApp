@@ -28,3 +28,4 @@ typings/
 !.vscode/extensions.json
 mapbox.txt
 gradle.properties
+.env

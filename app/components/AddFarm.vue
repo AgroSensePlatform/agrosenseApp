@@ -9,6 +9,17 @@
       <!-- Farm Name Input -->
       <TextField v-model="farmName" hint="Enter farm name" class="input" row="0"/>
 
+
+        <!-- Add MapboxView here -->
+        <MapboxView
+        height="300"
+        :accessToken="accessToken"
+        mapStyle="streets"
+        latitude="37.7749"
+        longitude="-122.4194"
+        zoomLevel="10"
+      />
+
       <!-- Get Location Button -->
       <Button text="Get Current Location" class="location-button" @tap="getCurrentLocation" row="1"/>
 
@@ -28,7 +39,7 @@
 <script>
   import { alert } from "@nativescript/core";
   import { AuthService } from "../shared/auth-service";
-  import { BASE_URL } from "../shared/config"; // Import BASE_URL from the shared config
+  import { BASE_URL, MAPBOX_ACCESS_TOKEN } from "../shared/config";
   import * as geolocation from "@nativescript/geolocation";
 
   export default {
@@ -36,6 +47,7 @@
       return {
         farmName: "", // Store the new farm name
         coordinates: [], // Store the list of coordinates
+        accessToken: MAPBOX_ACCESS_TOKEN,
       };
     },
     methods: {
