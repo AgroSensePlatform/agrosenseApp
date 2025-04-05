@@ -15,6 +15,9 @@
         :showPassword="true"
         @submit="updateUser"
       />
+
+    <!-- Delete Button -->
+    <Button text="Delete Account" class="delete-button" @tap="deleteUser" />
     </GridLayout>
   </Page>
 </template>
@@ -23,6 +26,7 @@
   import * as utils from "~/shared/utils";
   import { SelectedPageService } from "../shared/selected-page-service";
   import UserForm from "./UserForm";
+  import Login from "./Login";
   import { BASE_URL } from "../shared/config";
   import { AuthService } from "~/shared/auth-service";
 
@@ -98,7 +102,40 @@
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
-      }
+      },
+            async deleteUser() {
+        try {
+          const token = AuthService.getToken();
+          if (!token) {
+            alert("User is not logged in.");
+            return;
+          }
+          // Ask for confirmation before deleting
+          if (!confirm("Are you sure you want to delete your account? This cannot be undone.")) {
+            return;
+          }
+          const response = await fetch(`${BASE_URL}/api/user`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.ok) {
+            console.log("User deleted successfully");
+            // Logout the user
+            AuthService.setToken(null);
+            // Navigate to Login page with clearHistory to prevent back navigation
+            this.$navigateTo(Login, { clearHistory: true });
+          } else {
+            console.error("Failed to delete user:", await response.text());
+            alert("Failed to delete account. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error deleting user:", error);
+          alert("An error occurred while deleting your account.");
+        }
+      },
     },
   };
 </script>
