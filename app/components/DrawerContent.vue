@@ -73,7 +73,7 @@
 
 <script>
   import Home from "./Home";
-  import Farms from "./Farms";
+  import Farms from "./Farm/Farms";
   import Featured from "./Featured";
   import Sensors from "./Sensors";
   import Settings from "./Settings";

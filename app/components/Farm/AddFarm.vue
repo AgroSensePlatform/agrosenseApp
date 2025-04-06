@@ -40,8 +40,8 @@
 
 <script>
   import { alert } from "@nativescript/core";
-  import { AuthService } from "../shared/auth-service";
-  import { BASE_URL, MAPBOX_ACCESS_TOKEN } from "../shared/config";
+  import { AuthService } from "~/shared/auth-service";
+  import { BASE_URL, MAPBOX_ACCESS_TOKEN } from "~/shared/config";
   import Farms from "./Farms"; // Import the Farms page component
   import * as geolocation from "@nativescript/geolocation";
 

@@ -33,9 +33,9 @@
 
 <script>
   import * as utils from "~/shared/utils";
-  import { SelectedPageService } from "../shared/selected-page-service";
-  import { AuthService } from "../shared/auth-service"; // Import AuthService for token management
-  import { BASE_URL } from "../shared/config"; // Import BASE_URL from the shared config
+  import { SelectedPageService } from "~/shared/selected-page-service";
+  import { AuthService } from "~/shared/auth-service"; // Import AuthService for token management
+  import { BASE_URL } from "~/shared/config"; // Import BASE_URL from the shared config
 
   import AddFarm from "./AddFarm"; // Import the AddFarm component
 
