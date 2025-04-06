@@ -59,7 +59,7 @@
     mounted() {
       // Automatically center the map on the current location
       // without recording the coordinate for farm points.
-      //this.updateMapCenter();
+      this.updateMapCenter();
     },
     methods: {
       onMapReady(event) {
@@ -84,8 +84,8 @@
             this.currentLon = location.longitude;
             if (this.map) {
               this.map.setCenter({
-                lat: 52.3602160, // mandatory
-                lng: 4.8891680, // mandatory
+                lat: this.currentLat, // mandatory
+                lng: this.currentLon, // mandatory
                 animated: false // default true
               });
             }
