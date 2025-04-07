@@ -47,6 +47,7 @@
           const data = await response.json();
           console.log("Register Response:", data);
           if (response.ok) {
+            console.log("Registration successful:", data);
             // Optional: set a success message via the UserForm emit if needed
             setTimeout(() => {
               this.$navigateTo(Login);

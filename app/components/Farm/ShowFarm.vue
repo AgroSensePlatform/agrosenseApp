@@ -3,9 +3,11 @@
     <ActionBar title="Farm Details">
       <NavigationButton text="Go Back" android.systemIcon="ic_menu_back" @tap="goBack" />
     </ActionBar>
-    <GridLayout rows="*, 300" class="page__content" padding="20">
-      <StackLayout class="farm-details" row="0">
-        <Label v-if="farm.name" :text="farm.name" class="farm-name" />
+    <ScrollView>
+      <GridLayout rows="auto, 300, auto" class="page__content" padding="20">
+        <StackLayout class="farm-details" row="0">
+          <Label v-if="farm.name" :text="farm.name" class="farm-name" />
+        </StackLayout>
 
         <!-- MapboxView -->
         <MapboxView
@@ -21,9 +23,27 @@
           @mapReady="onMapReady"
         />
 
-        <Label v-else text="Loading farm details..." />
-      </StackLayout>
-    </GridLayout>
+        <!-- Debug Section -->
+        <StackLayout row="2" class="debug-section">
+          <Button text="Toggle Debug Info" @tap="toggleDebug" class="toggle-debug-button" />
+
+          <StackLayout v-if="showDebug" class="debug-info">
+            <Label text="Coordinates JSON:" class="debug-header" />
+            <TextView :text="JSON.stringify(farm.coordinates, null, 2)" class="debug-json" editable="false" />
+
+            <Label text="Coordinate Points:" class="debug-header" />
+            <StackLayout class="debug-points">
+              <Label
+                v-for="(coord, index) in farm.coordinates"
+                :key="index"
+                :text="`Point ${index+1}: Lat: ${coord.lat}, Lon: ${coord.lon}`"
+                class="debug-point"
+              />
+            </StackLayout>
+          </StackLayout>
+        </StackLayout>
+      </GridLayout>
+    </ScrollView>
   </Page>
 </template>
 
@@ -41,6 +61,7 @@ export default {
     return {
       accessToken: MAPBOX_ACCESS_TOKEN,
       map: null,
+      showDebug: false,
     };
   },
   mounted() {
@@ -54,6 +75,9 @@ export default {
   methods: {
     goBack() {
       this.$navigateBack();
+    },
+    toggleDebug() {
+      this.showDebug = !this.showDebug;
     },
     onMapReady(event) {
       this.map = event.object;
@@ -87,8 +111,41 @@ export default {
   font-weight: bold;
   margin-bottom: 10px;
 }
-.farm-coordinates {
-  font-size: 18px;
-  color: #666;
+.debug-section {
+  margin-top: 20;
+}
+.toggle-debug-button {
+  margin-top: 10;
+  margin-bottom: 10;
+  background-color: #555;
+  color: white;
+  font-size: 14;
+}
+.debug-info {
+  background-color: #f5f5f5;
+  padding: 10;
+  border-radius: 5;
+}
+.debug-header {
+  font-weight: bold;
+  font-size: 16;
+  margin-top: 10;
+}
+.debug-json {
+  background-color: #eee;
+  padding: 10;
+  font-family: monospace;
+  font-size: 12;
+  height: 150;
+}
+.debug-points {
+  margin-top: 10;
+}
+.debug-point {
+  font-family: monospace;
+  font-size: 12;
+  margin-bottom: 5;
+  padding: 5;
+  background-color: #eee;
 }
 </style>

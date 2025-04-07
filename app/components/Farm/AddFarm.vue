@@ -5,7 +5,7 @@
       <Label class="action-bar-title" text="Add Farm"/>
     </ActionBar>
 
-    <GridLayout class="page__content" rows="auto, auto, auto, auto, auto">
+    <GridLayout class="page__content" rows="auto, auto, auto, auto, auto, auto">
       <!-- Farm Name Input -->
       <TextField v-model="farmName" hint="Enter farm name" class="input" row="0"/>
 
@@ -25,15 +25,28 @@
       <!-- Get Location Button in row 2 (records a farm point) -->
       <Button text="Get Current Location" class="location-button" @tap="getCurrentLocation" row="2"/>
 
-      <!-- Coordinates List in row 3 -->
-      <ListView v-if="coordinates.length > 0" for="coord in coordinates" class="coordinates-list" row="3">
-        <v-template>
-          <Label :text="`Latitude: ${coord.lat}, Longitude: ${coord.lon}`" class="coordinate-item"/>
-        </v-template>
-      </ListView>
+      <!-- Debug Toggle Button in row 3 -->
+      <Button text="Toggle Debug Info" @tap="toggleDebug" class="toggle-debug-button" row="3"/>
 
-      <!-- Save Farm Button in row 4 -->
-      <Button text="Save Farm" class="save-button" @tap="saveFarm" row="4"/>
+      <!-- Debug Section in row 4 -->
+      <ScrollView row="4" v-if="showDebug">
+        <StackLayout class="debug-section">
+          <Label text="Coordinate Points:" class="debug-header" />
+          <StackLayout class="debug-points">
+            <Label
+              v-for="(coord, index) in coordinates"
+              :key="index"
+              :text="`Point ${index+1}: Lat: ${coord.lat}, Lon: ${coord.lon}`"
+              class="debug-point"
+            />
+          </StackLayout>
+        </StackLayout>
+        <!-- <Label text="Coordinates JSON:" class="debug-header" />
+        <TextView :text="JSON.stringify(coordinates, null, 2)" class="debug-json" editable="false" /> -->
+      </ScrollView>
+
+      <!-- Save Farm Button in row 5 -->
+      <Button text="Save Farm" class="save-button" @tap="saveFarm" row="5"/>
     </GridLayout>
   </Page>
 </template>
@@ -45,7 +58,6 @@
   import Farms from "./Farms"; // Import the Farms page component
   import * as geolocation from "@nativescript/geolocation";
 
-
   export default {
     data() {
       return {
@@ -54,15 +66,18 @@
         accessToken: MAPBOX_ACCESS_TOKEN,
         currentLat: 37.7749,
         currentLon: -122.4194,
-        map: null // Store the Mapbox view instance
+        map: null, // Store the Mapbox view instance
+        showDebug: false // Toggle for debug view
       };
     },
     mounted() {
       // Automatically center the map on the current location
-      // without recording the coordinate for farm points.
       this.updateMapCenter();
     },
     methods: {
+      toggleDebug() {
+        this.showDebug = !this.showDebug;
+      },
       onMapReady(event) {
         // Save the map instance
         this.map = event.object;
@@ -76,7 +91,7 @@
           }
           const location = await geolocation.getCurrentLocation({
             desiredAccuracy: 3,
-            updateDistance: 10,
+            updateDistance: 1, // Reduce to 1 meter
             timeout: 20000,
           });
           if (location) {
@@ -107,7 +122,7 @@
           }
           const location = await geolocation.getCurrentLocation({
             desiredAccuracy: 3,
-            updateDistance: 10,
+            updateDistance: 1, // Reduce to 1 meter
             timeout: 20000,
           });
           if (location) {
@@ -164,6 +179,40 @@
         }
       },
     },
+    watch: {
+      coordinates: {
+        handler(newCoordinates) {
+          console.log("Coordinates updated:", newCoordinates);
+        },
+        deep: true,
+      },
+    },
+    created() {
+      geolocation.watchLocation(
+        (location) => {
+          console.log(`Updated Location - Latitude: ${location.latitude}, Longitude: ${location.longitude}`);
+          this.coordinates.push({ lat: location.latitude, lon: location.longitude });
+          if (this.map) {
+            this.map.addMarkers([
+              {
+                lat: location.latitude,
+                lng: location.longitude,
+                selected: true,
+                onTap: () => { console.log("Marker tapped!"); }
+              }
+            ]);
+          }
+        },
+        (error) => {
+          console.error("Error watching location:", error);
+        },
+        {
+          desiredAccuracy: 3,
+          updateDistance: 1, // Update for every 1 meter of movement
+          minimumUpdateTime: 1000, // Update every 1 second
+        }
+      );
+    },
   };
 </script>
 
@@ -181,6 +230,50 @@
     padding: 10;
     border-radius: 5;
     text-align: center;
+  }
+
+  .toggle-debug-button {
+    margin: 10;
+    font-size: 16;
+    background-color: #555;
+    color: white;
+    padding: 8;
+    border-radius: 5;
+    text-align: center;
+  }
+
+  .debug-section {
+    margin: 10;
+    padding: 10;
+    background-color: #f5f5f5;
+    border-radius: 5;
+  }
+
+  .debug-header {
+    font-weight: bold;
+    font-size: 16;
+    margin-top: 10;
+  }
+
+  .debug-json {
+    background-color: #eee;
+    padding: 10;
+    font-family: monospace;
+    font-size: 12;
+    height: 150;
+    margin-top: 5;
+  }
+
+  .debug-points {
+    margin-top: 10;
+  }
+
+  .debug-point {
+    font-family: monospace;
+    font-size: 12;
+    margin-bottom: 5;
+    padding: 5;
+    background-color: #eee;
   }
 
   .coordinates-list {
