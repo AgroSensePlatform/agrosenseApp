@@ -14,10 +14,10 @@
           row="1"
           height="300"
           :accessToken="accessToken"
-          mapStyle="streets"
+          mapStyle="mapbox://styles/mapbox/satellite-v9"
           :latitude="farm.coordinates[0].lat"
           :longitude="farm.coordinates[0].lon"
-          zoomLevel="8"
+          zoomLevel="15"
           @mapReady="onMapReady"
         />
 
@@ -68,7 +68,7 @@ export default {
 
         this.map.addPolyline({
           points: points,
-          color: "#0000ff", // Red color for the line
+          color: "#0000ff", // Blue color for the line
           width: 3, // Line width
           opacity: 0.8, // Line opacity
         });
