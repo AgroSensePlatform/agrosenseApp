@@ -21,11 +21,6 @@
           @mapReady="onMapReady"
         />
 
-        <Label
-          v-if="farm.coordinates"
-          :text="`Coordinates: ${JSON.stringify(farm.coordinates)}`"
-          class="farm-coordinates"
-        />
         <Label v-else text="Loading farm details..." />
       </StackLayout>
     </GridLayout>
