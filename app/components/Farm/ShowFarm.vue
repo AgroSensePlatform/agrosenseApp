@@ -4,7 +4,7 @@
       <NavigationButton text="Go Back" android.systemIcon="ic_menu_back" @tap="goBack" />
     </ActionBar>
     <ScrollView>
-      <GridLayout rows="auto, 300, auto" class="page__content" padding="20">
+      <GridLayout rows="auto, 300, auto, auto" class="page__content" padding="20">
         <StackLayout class="farm-details" row="0">
           <Label v-if="farm.name" :text="farm.name" class="farm-name" />
         </StackLayout>
@@ -42,6 +42,14 @@
             </StackLayout>
           </StackLayout>
         </StackLayout>
+
+        <!-- Add Sensor Button -->
+        <Button
+          text="Add Sensor"
+          class="add-sensor-button"
+          @tap="navigateToAddSensor"
+          row="3"
+        />
       </GridLayout>
     </ScrollView>
   </Page>
@@ -49,6 +57,7 @@
 
 <script>
 import { MAPBOX_ACCESS_TOKEN } from "~/shared/config";
+import AddSensor from "~/components/Sensor/AddSensor";
 
 export default {
   props: {
@@ -97,6 +106,14 @@ export default {
           opacity: 0.8, // Line opacity
         });
       }
+    },
+    navigateToAddSensor() {
+      console.log("Navigating to AddSensor with farm_id:", this.farm.id);
+      this.$navigateTo(AddSensor, {
+        props: {
+          farmId: this.farm.id,
+        },
+      });
     },
   },
 };
@@ -147,5 +164,14 @@ export default {
   margin-bottom: 5;
   padding: 5;
   background-color: #eee;
+}
+.add-sensor-button {
+  margin-top: 20;
+  background-color: #28a745;
+  color: white;
+  font-size: 18;
+  padding: 10;
+  border-radius: 5;
+  text-align: center;
 }
 </style>
