@@ -28,8 +28,6 @@
         />
         <Label v-else text="Loading farm details..." />
       </StackLayout>
-
-
     </GridLayout>
   </Page>
 </template>
@@ -65,6 +63,21 @@ export default {
     onMapReady(event) {
       this.map = event.object;
       console.log("Map is ready!");
+
+      // Add a line layer connecting the points in the coordinates array
+      if (this.farm.coordinates && this.farm.coordinates.length > 1) {
+        const points = this.farm.coordinates.map(coord => ({
+          lat: coord.lat,
+          lng: coord.lon,
+        }));
+
+        this.map.addPolyline({
+          points: points,
+          color: "#0000ff", // Red color for the line
+          width: 3, // Line width
+          opacity: 0.8, // Line opacity
+        });
+      }
     },
   },
 };
