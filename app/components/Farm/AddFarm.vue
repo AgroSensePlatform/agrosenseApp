@@ -45,6 +45,7 @@
   import Farms from "./Farms"; // Import the Farms page component
   import * as geolocation from "@nativescript/geolocation";
 
+
   export default {
     data() {
       return {
@@ -112,6 +113,18 @@
           if (location) {
             console.log(`Farm Point - Latitude: ${location.latitude}, Longitude: ${location.longitude}`);
             this.coordinates.push({ lat: location.latitude, lon: location.longitude });
+            // If the map is ready, add a marker for the current location.
+            if (this.map) {
+              console.log("Adding marker to map...");
+              this.map.addMarkers([
+                {
+                  lat: location.latitude,
+                  lng: location.longitude,
+                  selected: true,
+                  onTap: () => { console.log("Marker tapped!"); }
+                }
+              ]);
+            }
           } else {
             alert("Unable to retrieve location for farm point. Please try again.");
           }
