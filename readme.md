@@ -20,7 +20,7 @@ AgroSense is a smart water management mobile application designed to assist farm
 - Update sensor details when scanned again.
 - View and delete sensors.
 
-### Measurement Management
+### Measurement Management (TODO)
 - Post real-time measurements (e.g., humidity) from sensors.
 - Store measurements in the database for analysis.
 - View historical measurements for sensors.
@@ -33,7 +33,7 @@ AgroSense is a smart water management mobile application designed to assist farm
 - **Mapping**: Mapbox
 - **Database**: MySQL (via backend)
 
-## Installation
+<!-- ## Installation
 
 ### Prerequisites
 - Node.js (v16 or higher)
@@ -79,7 +79,7 @@ AgroSense is a smart water management mobile application designed to assist farm
    - For iOS:
      ```bash
      ns build ios --release
-     ```
+     ``` -->
 
 ## Usage
 
@@ -100,23 +100,5 @@ This app integrates with the AgroSense Backend, which provides the following API
 - `/api/measurements`: Measurement management
 
 For more details, refer to the [AgroSense Backend documentation](https://github.com/your-backend-repo).
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-3. Commit your changes and push the branch.
-4. Submit a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
-## Contact
-
-For questions or support, please contact:
-- **Email**: support@agrosense.com
-- **Website**: [AgroSense](https://www.agrosense.com)
 
 
