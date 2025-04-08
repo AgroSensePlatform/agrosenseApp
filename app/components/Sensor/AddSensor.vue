@@ -5,12 +5,14 @@
     </ActionBar>
     <ScrollView>
       <StackLayout class="form-container" padding="20">
-        <!-- Sensor Code Input -->
-        <TextField v-model="sensorCode" hint="Enter sensor code" class="input" />
+        <!-- QR Code Scanner Button -->
+        <Button text="Scan QR Code" class="qr-button" @tap="scanQRCode" />
 
+        <!-- Display Scanned Sensor Code -->
+        <Label v-if="sensorCode" :text="`Sensor Code: ${sensorCode}`" class="sensor-code" />
 
-        <!-- Get GPS Location Button -->
-        <Button text="Get Current Location" class="location-button" @tap="getCurrentLocation" />
+        <!-- Get GPS Coordinates Button -->
+        <Button text="Get GPS Coordinates" class="gps-button" @tap="getCurrentLocation" />
 
         <!-- Display GPS Coordinates -->
         <Label v-if="lat && lon" :text="`Latitude: ${lat}, Longitude: ${lon}`" class="gps-coordinates" />
@@ -27,7 +29,7 @@ import { alert } from "@nativescript/core";
 import { AuthService } from "~/shared/auth-service";
 import { BASE_URL } from "~/shared/config";
 import * as geolocation from "@nativescript/geolocation";
-import { onMounted } from "vue";
+import { BarcodeScanner } from "nativescript-barcodescanner";
 
 export default {
   props: {
@@ -41,13 +43,41 @@ export default {
       sensorCode: "",
       lat: null,
       lon: null,
+      barcodeScanner: new BarcodeScanner(),
     };
   },
   mounted() {
-      console.log("AddSensor component mounted");
-      console.log("Farm ID:", this.farmId);
+    console.log("AddSensor component mounted");
+    console.log("Farm ID:", this.farmId);
   },
   methods: {
+    async scanQRCode() {
+      try {
+        const result = await this.barcodeScanner.scan({
+          formats: "QR_CODE", // Only scan QR codes
+          cancelLabel: "Cancel",
+          message: "Scan the QR code to retrieve the sensor code.",
+          showFlipCameraButton: true,
+          preferFrontCamera: false,
+        });
+
+        if (result.text) {
+          console.log("QR Code Scanned:", result.text);
+
+          // Parse the QR code data (assuming it's JSON with a code)
+          const data = JSON.parse(result.text);
+          if (data.code) {
+            this.sensorCode = data.code;
+            console.log(`Sensor Code: ${this.sensorCode}`);
+          } else {
+            alert("Invalid QR code format. Please try again.");
+          }
+        }
+      } catch (error) {
+        console.error("Error scanning QR code:", error);
+        alert("An error occurred while scanning the QR code.");
+      }
+    },
     async getCurrentLocation() {
       try {
         const isEnabled = await geolocation.isEnabled();
@@ -72,8 +102,8 @@ export default {
       }
     },
     async addSensor() {
-      if (!this.sensorCode || !this.sensorName || !this.sensorType || !this.lat || !this.lon) {
-        alert("Please fill in all fields and get the GPS location.");
+      if (!this.sensorCode || !this.lat || !this.lon) {
+        alert("Please scan the QR code and retrieve the GPS coordinates.");
         return;
       }
 
@@ -92,8 +122,6 @@ export default {
           },
           body: JSON.stringify({
             code: this.sensorCode,
-            name: this.sensorName,
-            type: this.sensorType,
             farm_id: this.farmId, // Pass the farm ID (can be null)
             lat: this.lat,
             lon: this.lon,
@@ -126,15 +154,8 @@ export default {
   margin: 20px;
 }
 
-.input {
-  margin-bottom: 20px;
-  font-size: 18px;
-  padding: 10px;
-  border-radius: 5px;
-  background-color: white;
-}
-
-.location-button {
+.qr-button,
+.gps-button {
   margin-bottom: 20px;
   font-size: 18px;
   background-color: #007bff;
@@ -144,6 +165,7 @@ export default {
   text-align: center;
 }
 
+.sensor-code,
 .gps-coordinates {
   margin-bottom: 20px;
   font-size: 16px;
