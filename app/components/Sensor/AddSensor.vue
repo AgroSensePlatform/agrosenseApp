@@ -9,14 +9,13 @@
         <Button text="Scan Sensor" class="scan-button" @tap="scanSensor" />
 
         <!-- Add Sensor Button -->
-        <Button text="Add Sensor" class="add-button" @tap="addSensor" />
+        <Button  v-if="sensorCode && sensorCode.trim() !== '' && lat !== null && lon !== null"   text="Add Sensor" class="add-button" @tap="addSensor" />
 
         <!-- Display Scanned Sensor Code -->
-        <Label v-if="sensorCode" :text="`Sensor Code: ${sensorCode}`" class="sensor-code" />
+        <Label v-if="sensorCode" :text="`Sensor Code: ${sensorCode}`" class="sensor-code"  />
 
         <!-- Display GPS Coordinates -->
         <Label v-if="lat && lon" :text="`Latitude: ${lat}, Longitude: ${lon}`" class="gps-coordinates" />
-
 
         <!-- Display All Data in a TextView -->
         <TextView
@@ -24,6 +23,7 @@
           :text="`Scanned Code: ${sensorCode || 'N/A'}\nFarm ID: ${farmId || 'N/A'}\nLatitude: ${lat || 'N/A'}\nLongitude: ${lon || 'N/A'}`"
           class="data-text"
           editable="false"
+          textWrap="true"
         />
       </StackLayout>
     </ScrollView>
@@ -123,8 +123,7 @@ export default {
           lon: this.lon,
         };
 
-        // Update debug information with request data
-        this.debugData.request = JSON.stringify(requestData, null, 2);
+
 
         const response = await fetch(`${BASE_URL}/api/scan`, {
           method: "POST",
@@ -136,17 +135,14 @@ export default {
         });
 
         const responseText = await response.text();
-        this.debugData.response = responseText;
 
         // Try to parse the response as JSON for display purposes
         try {
           const responseData = JSON.parse(responseText);
-          this.debugData.response = JSON.stringify(responseData, null, 2);
         } catch (e) {
           // If not JSON, keep as is
         }
 
-        console.log("Response:", this.debugData.response);
 
         if (response.ok) {
           alert("Sensor registered successfully!");
@@ -156,7 +152,6 @@ export default {
         }
       } catch (error) {
         console.error("Error during sensor registration:", error);
-        this.debugData.response = `Error: ${error.message || error}`;
         alert("An error occurred while registering the sensor. See debug information.");
       }
     },
@@ -235,6 +230,5 @@ export default {
   border: 1px solid #ccc;
   font-size: 14px;
   margin-top: 20px;
-  white-space: pre-wrap; /* Preserve line breaks */
 }
 </style>
