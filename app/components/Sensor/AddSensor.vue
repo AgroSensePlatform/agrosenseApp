@@ -125,7 +125,7 @@ export default {
 
 
 
-        const response = await fetch(`${BASE_URL}/api/scan`, {
+        const response = await fetch(`${BASE_URL}/api/sensors/scan`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
