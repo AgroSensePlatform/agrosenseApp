@@ -5,20 +5,26 @@
     </ActionBar>
     <ScrollView>
       <StackLayout class="form-container" padding="20">
-        <!-- QR Code Scanner Button -->
-        <Button text="Scan QR Code" class="qr-button" @tap="scanQRCode" />
+        <!-- Scan Sensor Button -->
+        <Button text="Scan Sensor" class="scan-button" @tap="scanSensor" />
+
+        <!-- Add Sensor Button -->
+        <Button text="Add Sensor" class="add-button" @tap="addSensor" />
 
         <!-- Display Scanned Sensor Code -->
         <Label v-if="sensorCode" :text="`Sensor Code: ${sensorCode}`" class="sensor-code" />
 
-        <!-- Get GPS Coordinates Button -->
-        <Button text="Get GPS Coordinates" class="gps-button" @tap="getCurrentLocation" />
-
         <!-- Display GPS Coordinates -->
         <Label v-if="lat && lon" :text="`Latitude: ${lat}, Longitude: ${lon}`" class="gps-coordinates" />
 
-        <!-- Add Sensor Button -->
-        <Button text="Add Sensor" class="add-button" @tap="addSensor" />
+
+        <!-- Display All Data in a TextView -->
+        <TextView
+          v-if="sensorCode || farmId || lat || lon"
+          :text="`Scanned Code: ${sensorCode || 'N/A'}\nFarm ID: ${farmId || 'N/A'}\nLatitude: ${lat || 'N/A'}\nLongitude: ${lon || 'N/A'}`"
+          class="data-text"
+          editable="false"
+        />
       </StackLayout>
     </ScrollView>
   </Page>
@@ -35,7 +41,7 @@ export default {
   props: {
     farmId: {
       type: Number,
-      default: null, // If no farmId is passed, it will be null
+      default: null,
     },
   },
   data() {
@@ -51,44 +57,41 @@ export default {
     console.log("Farm ID:", this.farmId);
   },
   methods: {
-    async scanQRCode() {
+    async scanSensor() {
       try {
-        const result = await this.barcodeScanner.scan({
-          formats: "QR_CODE", // Only scan QR codes
+        // Step 1: Scan QR Code
+        const qrResult = await this.barcodeScanner.scan({
+          formats: "QR_CODE",
           cancelLabel: "Cancel",
           message: "Scan the QR code to retrieve the sensor code.",
           showFlipCameraButton: true,
           preferFrontCamera: false,
         });
 
-        if (result.text) {
-          console.log("QR Code Scanned:", result.text);
+        // Log the entire qrResult object for debugging
+        console.log("QR Code Scan Result:", qrResult);
 
-          // Parse the QR code data (assuming it's JSON with a code)
-          const data = JSON.parse(result.text);
-          if (data.code) {
-            this.sensorCode = data.code;
-            console.log(`Sensor Code: ${this.sensorCode}`);
-          } else {
-            alert("Invalid QR code format. Please try again.");
-          }
+        if (!qrResult.text) {
+          alert("QR code scanning failed. Please try again.");
+          return;
         }
-      } catch (error) {
-        console.error("Error scanning QR code:", error);
-        alert("An error occurred while scanning the QR code.");
-      }
-    },
-    async getCurrentLocation() {
-      try {
+
+        // Use the scanned text directly as the sensor code
+        console.log("Scanned QR Code Text:", qrResult.text);
+        this.sensorCode = qrResult.text;
+
+        // Step 2: Get GPS Coordinates
         const isEnabled = await geolocation.isEnabled();
         if (!isEnabled) {
           await geolocation.enableLocationRequest();
         }
+
         const location = await geolocation.getCurrentLocation({
           desiredAccuracy: 3,
           updateDistance: 1,
           timeout: 20000,
         });
+
         if (location) {
           this.lat = location.latitude;
           this.lon = location.longitude;
@@ -96,49 +99,65 @@ export default {
         } else {
           alert("Unable to retrieve GPS location. Please try again.");
         }
+
+        alert("Scanned QR code successfully!");
+        console.log(`Sensor Code: ${this.sensorCode}`);
       } catch (error) {
-        console.error("Error getting GPS location:", error);
-        alert("An error occurred while fetching the GPS location.");
+        console.error("Error during sensor scanning:", error);
+        alert("An error occurred while scanning the sensor. Please try again.");
       }
     },
     async addSensor() {
-      if (!this.sensorCode || !this.lat || !this.lon) {
-        alert("Please scan the QR code and retrieve the GPS coordinates.");
-        return;
-      }
-
       try {
+        // Step 3: Send Data to Backend
         const token = AuthService.getToken();
         if (!token) {
-          alert("You must be logged in to add a sensor.");
+          alert("You must be logged in to register a sensor.");
           return;
         }
 
-        const response = await fetch(`${BASE_URL}/sensors`, {
+        const requestData = {
+          code: this.sensorCode,
+          farm_id: this.farmId,
+          lat: this.lat,
+          lon: this.lon,
+        };
+
+        // Update debug information with request data
+        this.debugData.request = JSON.stringify(requestData, null, 2);
+
+        const response = await fetch(`${BASE_URL}/api/scan`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            code: this.sensorCode,
-            farm_id: this.farmId, // Pass the farm ID (can be null)
-            lat: this.lat,
-            lon: this.lon,
-          }),
+          body: JSON.stringify(requestData),
         });
 
+        const responseText = await response.text();
+        this.debugData.response = responseText;
+
+        // Try to parse the response as JSON for display purposes
+        try {
+          const responseData = JSON.parse(responseText);
+          this.debugData.response = JSON.stringify(responseData, null, 2);
+        } catch (e) {
+          // If not JSON, keep as is
+        }
+
+        console.log("Response:", this.debugData.response);
+
         if (response.ok) {
-          alert("Sensor added successfully!");
-          this.$navigateBack();
+          alert("Sensor registered successfully!");
         } else {
-          const errorText = await response.text();
-          console.error("Failed to add sensor:", errorText);
-          alert("Failed to add sensor. Please try again.");
+          console.error("Failed to register sensor:", responseText);
+          alert("Failed to register sensor. Please check the debug information.");
         }
       } catch (error) {
-        console.error("Error adding sensor:", error);
-        alert("An error occurred while adding the sensor.");
+        console.error("Error during sensor registration:", error);
+        this.debugData.response = `Error: ${error.message || error}`;
+        alert("An error occurred while registering the sensor. See debug information.");
       }
     },
   },
@@ -154,8 +173,8 @@ export default {
   margin: 20px;
 }
 
-.qr-button,
-.gps-button {
+.scan-button,
+.add-button {
   margin-bottom: 20px;
   font-size: 18px;
   background-color: #007bff;
@@ -172,12 +191,50 @@ export default {
   color: #555;
 }
 
-.add-button {
-  background-color: #28a745;
-  color: white;
+.debug-section {
+  margin-top: 30px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.debug-title {
   font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.debug-subtitle {
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+.debug-text {
+  background-color: #fff;
+  color: #333;
+  font-family: monospace;
+  padding: 10px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  height: 150;
+  margin-bottom: 10px;
+}
+
+.data-text {
+  background-color: #fff;
+  color: #333;
+  font-family: monospace;
   padding: 10px;
   border-radius: 5px;
-  text-align: center;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  margin-top: 20px;
+  white-space: pre-wrap; /* Preserve line breaks */
 }
 </style>
