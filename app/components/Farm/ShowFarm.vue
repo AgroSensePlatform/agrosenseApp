@@ -4,7 +4,8 @@
       <NavigationButton text="Go Back" android.systemIcon="ic_menu_back" @tap="goBack" />
     </ActionBar>
     <ScrollView>
-      <GridLayout rows="auto, 300, auto, auto" class="page__content" padding="20">
+      <!-- Update grid rows: row0: farm, row1: map, row2: add sensor button, row3: sensors list, row4: debug section -->
+      <GridLayout rows="auto, 300, auto, auto, auto" class="page__content" padding="20">
         <StackLayout class="farm-details" row="0">
           <Label v-if="farm.name" :text="farm.name" class="farm-name" />
         </StackLayout>
@@ -23,13 +24,36 @@
           @mapReady="onMapReady"
         />
 
-        <!-- Debug Section -->
-        <StackLayout row="2" class="debug-section">
-          <Button text="Toggle Debug Info" @tap="toggleDebug" class="toggle-debug-button" />
+        <!-- Add Sensor Button (Moved Above Sensors List) -->
+        <Button
+          text="Add Sensor"
+          class="add-sensor-button"
+          @tap="navigateToAddSensor"
+          row="2"
+        />
 
+        <!-- Sensors List (Always Visible) -->
+        <StackLayout row="3" class="sensor-list">
+          <Label text="Sensors:" class="debug-header" />
+          <StackLayout>
+            <Label
+              v-for="(sensor, index) in sensors"
+              :key="index"
+              :text="`Sensor ${index+1}: ${sensor.name || sensor.id}`"
+              class="debug-sensor"
+            />
+          </StackLayout>
+        </StackLayout>
+
+        <!-- Debug Section -->
+        <StackLayout row="4" class="debug-section">
+          <Button text="Toggle Debug Info" @tap="toggleDebug" class="toggle-debug-button" />
           <StackLayout v-if="showDebug" class="debug-info">
             <Label text="Coordinates JSON:" class="debug-header" />
             <TextView :text="JSON.stringify(farm.coordinates, null, 2)" class="debug-json" editable="false" />
+
+            <Label text="Sensors JSON:" class="debug-header" />
+            <TextView :text="JSON.stringify(sensors, null, 2)" class="debug-json" editable="false" />
 
             <Label text="Coordinate Points:" class="debug-header" />
             <StackLayout class="debug-points">
@@ -42,22 +66,15 @@
             </StackLayout>
           </StackLayout>
         </StackLayout>
-
-        <!-- Add Sensor Button -->
-        <Button
-          text="Add Sensor"
-          class="add-sensor-button"
-          @tap="navigateToAddSensor"
-          row="3"
-        />
       </GridLayout>
     </ScrollView>
   </Page>
 </template>
 
 <script>
-import { MAPBOX_ACCESS_TOKEN } from "~/shared/config";
+import { MAPBOX_ACCESS_TOKEN, BASE_URL } from "~/shared/config";
 import AddSensor from "~/components/Sensor/AddSensor";
+import { AuthService } from "~/shared/auth-service";
 
 export default {
   props: {
@@ -71,17 +88,45 @@ export default {
       accessToken: MAPBOX_ACCESS_TOKEN,
       map: null,
       showDebug: false,
+      sensors: []
     };
   },
   mounted() {
     console.log("ShowFarm mounted, farm:", this.farm);
     if (this.farm) {
       console.log("Received farm:", this.farm);
+      this.fetchSensors();
     } else {
       console.error("No farm passed as context.");
     }
   },
   methods: {
+    fetchSensors() {
+      const token = AuthService.getToken();
+      if (!token) {
+        console.warn("User not logged in. No token available.");
+        return;
+      }
+      fetch(`${BASE_URL}/api/farms/${this.farm.id}/sensors`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+      })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error("Failed to fetch sensors: " + response.statusText);
+        })
+        .then(data => {
+          this.sensors = data;
+        })
+        .catch(error => {
+          console.error("Error fetching sensors:", error);
+        });
+    },
     goBack() {
       this.$navigateBack();
     },
@@ -159,6 +204,16 @@ export default {
   margin-top: 10;
 }
 .debug-point {
+  font-family: monospace;
+  font-size: 12;
+  margin-bottom: 5;
+  padding: 5;
+  background-color: #eee;
+}
+.sensor-list {
+  margin-top: 10;
+}
+.debug-sensor {
   font-family: monospace;
   font-size: 12;
   margin-bottom: 5;
