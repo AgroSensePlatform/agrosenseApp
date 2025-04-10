@@ -96,9 +96,8 @@ This app integrates with the AgroSense Backend, which provides the following API
 - `/api/login`: User login
 - `/api/logout`: User logout
 - `/api/farms`: Farm management
-- `/api/sensors`: Sensor management
-- `/api/measurements`: Measurement management
+- `/api/farms/{farm}/sensors`: Get Farms Sensor
 
-For more details, refer to the [AgroSense Backend documentation](https://github.com/your-backend-repo).
+For more details, refer to the [AgroSense Backend documentation](https://github.com/AgroSensePlatform/agrosense-server).
 
 
