@@ -12,15 +12,6 @@
       <GridLayout class="page__content" rows="*, auto, auto">
           <Label class="page__content-icon fas" text.decode="&#xf015;" row="0"/>
           <Label class="page__content-placeholder" :text="message" row="0"/>
-
-          <!-- Button to get GPS coordinates -->
-          <Button text="Get GPS Coordinates" @tap="getCoordinates" class="btn btn-primary" row="1"/>
-
-          <!-- Button to display GPS coordinates -->
-          <Button text="Display Coordinates" @tap="displayCoordinates" class="btn btn-secondary" row="2"/>
-
-          <!-- Label to show the coordinates -->
-          <Label v-if="coords" :text="coords" class="coords-label" row="2"/>
       </GridLayout>
   </Page>
 </template>
@@ -48,39 +39,6 @@ export default {
     onDrawerButtonTap() {
       utils.showDrawer();
     },
-    async getCoordinates() {
-      try {
-        // Ensure location services are enabled
-        const isEnabled = await geolocation.isEnabled();
-        if (!isEnabled) {
-          await geolocation.enableLocationRequest();
-        }
-
-        // Get current location
-        const location = await geolocation.getCurrentLocation({
-          desiredAccuracy: 3, // High accuracy
-          updateDistance: 10, // Minimum distance to update
-          timeout: 20000 // Timeout in milliseconds
-        });
-
-        if (location) {
-          console.log(`Latitude: ${location.latitude}, Longitude: ${location.longitude}`);
-          this.coords = `Latitude: ${location.latitude}, Longitude: ${location.longitude}`;
-        } else {
-          this.coords = "Unable to retrieve location.";
-        }
-      } catch (error) {
-        console.error("Error getting location:", error);
-        this.coords = "Error getting location. Please try again.";
-      }
-    },
-    displayCoordinates() {
-      if (this.coords) {
-        alert(this.coords);
-      } else {
-        alert("Coordinates not available. Please fetch them first.");
-      }
-    }
   }
 };
 </script>

@@ -62,7 +62,6 @@ import { SelectedPageService } from "../shared/selected-page-service";
     mounted() {
       // Automatically center the map on the current location
       this.updateMapCenter();
-      alert(MAPBOX_ACCESS_TOKEN);
     },
     methods: {
       onDrawerButtonTap() {
