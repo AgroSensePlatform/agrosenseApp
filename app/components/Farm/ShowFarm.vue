@@ -36,11 +36,10 @@
         <StackLayout row="3" class="sensor-list">
           <Label text="Sensors:" class="debug-header" />
           <StackLayout>
-            <Label
+            <SensorItem
               v-for="(sensor, index) in sensors"
               :key="index"
-              :text="`Sensor ${index+1}: ${sensor.name || sensor.id}`"
-              class="debug-sensor"
+              :sensor="sensor"
             />
           </StackLayout>
         </StackLayout>
@@ -74,9 +73,13 @@
 <script>
 import { MAPBOX_ACCESS_TOKEN, BASE_URL } from "~/shared/config";
 import AddSensor from "~/components/Sensor/AddSensor";
+import SensorItem from "~/components/Sensor/SensorItem"; // Import the new component
 import { AuthService } from "~/shared/auth-service";
 
 export default {
+  components: {
+    SensorItem, // Register the new component
+  },
   props: {
     farm: {
       type: Object,
@@ -228,5 +231,50 @@ export default {
   padding: 10;
   border-radius: 5;
   text-align: center;
+}
+.sensor-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f0f8ff; /* Light blue background for each sensor */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.sensor-header {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.sensor-main {
+  margin-bottom: 10px;
+}
+
+.sensor-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 5px;
+}
+
+.sensor-time {
+  font-size: 12px;
+  color: #555;
+  text-align: left;
+}
+
+.sensor-footer {
+  border-top: 1px solid #ddd;
+  padding-top: 5px;
+  margin-top: 10px;
+}
+
+.sensor-detail {
+  font-size: 12px;
+  color: #555;
+  text-align: left;
 }
 </style>
