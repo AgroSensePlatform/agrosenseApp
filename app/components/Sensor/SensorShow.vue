@@ -1,16 +1,12 @@
 <template>
   <Page class="page">
-    <ActionBar class="action-bar">
-      <NavigationButton visibility="hidden"/>
-      <GridLayout columns="50, *">
-        <Label class="action-bar-title" text="Sensor Details" colSpan="2"/>
-        <Label class="fas" text.decode="&#xf0c9;" @tap="onDrawerButtonTap"/>
-      </GridLayout>
+    <ActionBar title="Sensor Details">
+      <NavigationButton text="Go Back" android.systemIcon="ic_menu_back" @tap="goBack" />
     </ActionBar>
 
     <ScrollView>
       <StackLayout class="page__content" padding="20">
-        <!-- Display Last Measurement -->
+        <!-- 1. Display Last Measurement -->
         <Label v-if="sensor && sensor.measurements && sensor.measurements.length > 0" class="measurement-header" text="Last Measurement" />
         <StackLayout v-if="sensor && sensor.measurements && sensor.measurements.length > 0" class="measurement-details">
           <Label :text="`Humidity: ${sensor.measurements[0].humidity}%`" class="measurement-value" />
@@ -18,17 +14,33 @@
         </StackLayout>
         <Label v-else text="No measurements available." class="no-measurements" />
 
-        <!-- Display Map - UPDATED COMPONENT NAME -->
+        <!-- 2. Display Map -->
         <MapboxView
           v-if="sensor"
           :accessToken="MAPBOX_ACCESS_TOKEN"
-          mapStyle="mapbox://styles/mapbox/streets-v11"
+          mapStyle="mapbox://styles/mapbox/satellite-v9"
           :latitude="sensor.lat"
           :longitude="sensor.lon"
           zoomLevel="10"
+          height="300"
           class="sensor-map"
           @mapReady="onMapReady"
         />
+
+        <!-- 3. Display All Measurements -->
+        <StackLayout v-if="sensor && sensor.measurements && sensor.measurements.length > 0" class="all-measurements">
+          <Label text="All Measurements" class="measurements-header" />
+
+          <StackLayout
+            v-for="(measurement, index) in sensor.measurements"
+            :key="index"
+            class="measurement-item"
+          >
+            <Label :text="`Humidity: ${measurement.humidity}%`" class="measurement-value" />
+            <Label :text="`Timestamp: ${measurement.timestamp}`" class="measurement-time" />
+            <StackLayout class="separator" v-if="index < sensor.measurements.length - 1"></StackLayout>
+          </StackLayout>
+        </StackLayout>
       </StackLayout>
     </ScrollView>
   </Page>
@@ -39,14 +51,9 @@ import * as utils from "~/shared/utils";
 import { SelectedPageService } from "~/shared/selected-page-service";
 import { AuthService } from "~/shared/auth-service";
 import { MAPBOX_ACCESS_TOKEN, BASE_URL } from "~/shared/config";
-// Remove this import
-// import { Mapbox } from "@nativescript-community/ui-mapbox";
 
 export default {
-  // Update component registration - remove Mapbox or use plugin's correct registration
-  components: {
-    // Mapbox is likely registered globally, so we can remove this
-  },
+  components: {},
   props: {
     sensorId: {
       type: Number,
@@ -64,8 +71,8 @@ export default {
     await this.fetchSensorDetails();
   },
   methods: {
-    onDrawerButtonTap() {
-      utils.showDrawer();
+    goBack() {
+      this.$navigateBack();
     },
     async fetchSensorDetails() {
       try {
@@ -92,7 +99,6 @@ export default {
         console.error("Error fetching sensor details:", error);
       }
     },
-    // Add this method to handle map markers
     onMapReady(event) {
       const map = event.object;
       console.log("Map is ready!");
@@ -145,5 +151,32 @@ export default {
     height: 300px;
     border: 1px solid $accent;
     border-radius: 5px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+  }
+
+  .all-measurements {
+    margin-top: 20px;
+  }
+
+  .measurements-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  .measurement-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: $accent;
+  }
+
+  .separator {
+    height: 1px;
+    background-color: $accent;
+    margin: 5px 0;
   }
 </style>
