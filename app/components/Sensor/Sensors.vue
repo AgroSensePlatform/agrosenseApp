@@ -9,9 +9,19 @@
         </GridLayout>
       </ActionBar>
 
-        <GridLayout class="page__content">
-            <Label class="page__content-icon fas" text.decode="&#xf002;"/>
-            <Label class="page__content-placeholder" :text="message"/>
+        <GridLayout class="page__content" rows="auto, *" padding="20">
+            <Label v-if="!isLoggedIn" class="page__content-placeholder" text="Please log in to view your sensors." row="0"/>
+
+            <ListView
+                v-if="isLoggedIn"
+                for="sensor in sensors"
+                class="page__content-list fullwidth"
+                row="1"
+            >
+                <v-template>
+                    <SensorItem :sensor="sensor" class="sensor-item-margin" />
+                </v-template>
+            </ListView>
         </GridLayout>
     </Page>
 </template>
@@ -19,28 +29,82 @@
 <script>
   import * as utils from "~/shared/utils";
   import { SelectedPageService } from "~/shared/selected-page-service";
+  import { AuthService } from "~/shared/auth-service";
+  import { BASE_URL } from "~/shared/config";
+  import SensorItem from "~/components/Sensor/SensorItem"; // Import the new component
 
   export default {
+    components: {
+      SensorItem,
+    },
+    data() {
+      return {
+        sensors: [],
+        isLoggedIn: !!AuthService.getToken(),
+      };
+    },
     mounted() {
       SelectedPageService.getInstance().updateSelectedPage("Sensors");
-    },
-    computed: {
-      message() {
-        return "<!-- Page content goes here -->";
+      if (this.isLoggedIn) {
+        this.fetchSensors();
       }
     },
     methods: {
       onDrawerButtonTap() {
         utils.showDrawer();
-      }
-    }
+      },
+      async fetchSensors() {
+        try {
+          const token = AuthService.getToken();
+          if (!token) {
+            console.warn("No token found. User is not logged in.");
+            return;
+          }
+          const response = await fetch(`${BASE_URL}/api/sensors`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.ok) {
+            const sensorsData = await response.json();
+            console.log("Sensors Response:", sensorsData);
+            this.sensors = sensorsData.map(sensor => ({
+              id: sensor.id,
+              code: sensor.code,
+              last_measurement: sensor.last_measurement,
+              lat: sensor.lat,
+              lon: sensor.lon,
+            }));
+          } else {
+            console.error("Failed to fetch sensors:", await response.text());
+          }
+        } catch (error) {
+          console.error("Error fetching sensors:", error);
+        }
+      },
+    },
   };
 </script>
 
 <style scoped lang="scss">
-    // Start custom common variables
     @import '~/styles/variables/green';
-    // End custom common variables
 
-    // Custom styles
+    .page__content-placeholder {
+        font-size: 18px;
+        text-align: center;
+        margin-top: 20px;
+        color: $text-color;
+    }
+
+    .page__content-list {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .sensor-item-margin {
+        margin-bottom: 15px;
+    }
 </style>
