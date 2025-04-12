@@ -33,7 +33,7 @@ AgroSense is a smart water management mobile application designed to assist farm
 - **Mapping**: Mapbox
 - **Database**: MySQL (via backend)
 
-<!-- ## Installation
+ ## Installation
 
 ### Prerequisites
 - Node.js (v16 or higher)
@@ -59,6 +59,8 @@ AgroSense is a smart water management mobile application designed to assist farm
 4. Create a `.env` file in the root directory and configure the following:
    ```env
    VUE_APP_BASE_URL=http://your-backend-url/api
+   MAPBOX_ACCESS_TOKEN=your_mapbox_public_access_token
+   MAPBOX_DOWNLOADS_TOKEN=your_mapbox_downloads_token
    ```
 
 5. Run the app on an emulator or device:
@@ -79,7 +81,7 @@ AgroSense is a smart water management mobile application designed to assist farm
    - For iOS:
      ```bash
      ns build ios --release
-     ``` -->
+     ```
 
 ## Usage
 
