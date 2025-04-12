@@ -36,11 +36,14 @@
         <StackLayout row="3" class="sensor-list">
           <Label text="Sensors:" class="debug-header" />
           <StackLayout>
-            <SensorItem
+            <StackLayout
               v-for="(sensor, index) in sensors"
               :key="index"
-              :sensor="sensor"
-            />
+              @tap="navigateToSensorDetails(sensor.id)"
+              class="sensor-item-wrapper"
+            >
+              <SensorItem :sensor="sensor" />
+            </StackLayout>
           </StackLayout>
         </StackLayout>
 
@@ -73,12 +76,13 @@
 <script>
 import { MAPBOX_ACCESS_TOKEN, BASE_URL } from "~/shared/config";
 import AddSensor from "~/components/Sensor/AddSensor";
-import SensorItem from "~/components/Sensor/SensorItem"; // Import the new component
+import SensorItem from "~/components/Sensor/SensorItem";
+import SensorShow from "~/components/Sensor/SensorShow"; // Import SensorShow component
 import { AuthService } from "~/shared/auth-service";
 
 export default {
   components: {
-    SensorItem, // Register the new component
+    SensorItem,
   },
   props: {
     farm: {
@@ -104,6 +108,14 @@ export default {
     }
   },
   methods: {
+    // Add navigation method for sensors
+    navigateToSensorDetails(sensorId) {
+      console.log("Navigating to sensor details for sensor ID:", sensorId);
+      this.$navigateTo(SensorShow, {
+        props: { sensorId: sensorId }
+      });
+    },
+    // Keep all existing methods
     fetchSensors() {
       const token = AuthService.getToken();
       if (!token) {
@@ -276,5 +288,10 @@ export default {
   font-size: 12px;
   color: #555;
   text-align: left;
+}
+
+/* Add this style for better tap experience */
+.sensor-item-wrapper {
+  margin-bottom: 15px;
 }
 </style>
