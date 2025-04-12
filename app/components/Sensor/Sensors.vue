@@ -18,7 +18,7 @@
 
 <script>
   import * as utils from "~/shared/utils";
-  import { SelectedPageService } from "../shared/selected-page-service";
+  import { SelectedPageService } from "~/shared/selected-page-service";
 
   export default {
     mounted() {

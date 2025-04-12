@@ -75,7 +75,7 @@
   import Home from "./Home";
   import Farms from "./Farm/Farms";
   import Featured from "./Featured";
-  import Sensors from "./Sensors";
+  import Sensors from "./Sensor/Sensors";
   import Settings from "./Settings";
   import Login from "./Login";
   import Register from "./Register";  // <-- Import
