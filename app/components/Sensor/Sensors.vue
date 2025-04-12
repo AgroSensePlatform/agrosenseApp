@@ -19,7 +19,9 @@
                 row="1"
             >
                 <v-template>
-                    <SensorItem :sensor="sensor" class="sensor-item-margin" />
+                    <StackLayout @tap="navigateToSensorDetails(sensor.id)" class="sensor-item-margin">
+                        <SensorItem :sensor="sensor" />
+                    </StackLayout>
                 </v-template>
             </ListView>
         </GridLayout>
@@ -31,11 +33,13 @@
   import { SelectedPageService } from "~/shared/selected-page-service";
   import { AuthService } from "~/shared/auth-service";
   import { BASE_URL } from "~/shared/config";
-  import SensorItem from "~/components/Sensor/SensorItem"; // Import the new component
+  import SensorItem from "~/components/Sensor/SensorItem"; // Import the SensorItem component
+  import SensorShow from "~/components/Sensor/SensorShow"; // Import the SensorShow component
 
   export default {
     components: {
-      SensorItem,
+      SensorItem, // Register SensorItem
+      SensorShow, // Register SensorShow
     },
     data() {
       return {
@@ -52,6 +56,11 @@
     methods: {
       onDrawerButtonTap() {
         utils.showDrawer();
+      },
+      navigateToSensorDetails(sensorId) {
+        this.$navigateTo(SensorShow, {
+          props: { sensorId: sensorId }
+        });
       },
       async fetchSensors() {
         try {
