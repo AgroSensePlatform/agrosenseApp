@@ -3,7 +3,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+      <link rel="stylesheet" href="file:////home/gkalog-laptop/.vscode/extensions/shd101wyy.markdown-preview-enhanced-0.8.18/crossnote/dependencies/katex/katex.min.css">
       
       
       
@@ -33,7 +33,7 @@
 <li>Δημιουργία και διαχείριση λογαριασμού χρήστη.</li>
 <li>Καταγραφή γεωγραφικών αγροτεμαχίων με GPS.</li>
 <li>Εγκατάσταση αισθητήρων υγρασίας μέσω σάρωσης QR κωδικού.</li>
-<li>Υποβολή και αποθήκευση μετρήσεων.</li>
+<li>Υποβολή και αποθήκευση μετρήσεων απο τους αισθητήρες.</li>
 <li>Προβολή δεδομένων μέσω χαρτών και λιστών.</li>
 <li>Διαχείριση λογαριασμού χρήστη.</li>
 <li>Επεκτασιμότητα για πολλαπλούς χρήστες και αισθητήρες.</li>
@@ -46,49 +46,228 @@
 <li>Επικοινωνία: HTTPS αιτήσεις από mobile προς API.</li>
 <li>Δεδομένα: Αισθητήρες, μετρήσεις και γεωγραφικά όρια αποθηκεύονται στο backend.</li>
 </ul>
-<h2 id="4-υλοποίηση-τεχνολογιών">4. Υλοποίηση Τεχνολογιών </h2>
-<p>Η εφαρμογή υλοποιεί:</p>
+<h2 id="4-υπηρεσίες-backend-και-δομή-βάσης-δεδομένων">4. Υπηρεσίες Backend και Δομή Βάσης Δεδομένων </h2>
+<p>Το backend της εφαρμογής AgroSense παρέχει RESTful APIs για τη διαχείριση χρηστών, αγροτεμαχίων, αισθητήρων και μετρήσεων. Επίσης, χρησιμοποιεί μια καλά σχεδιασμένη βάση δεδομένων για την αποθήκευση των δεδομένων.</p>
+<h3 id="41-διαθέσιμα-endpoints">4.1 Διαθέσιμα Endpoints </h3>
+<h4 id="authentication">Authentication </h4>
 <ul>
-<li>Συνδεσιμότητα στο Διαδίκτυο μέσω API.</li>
-<li>Επίγνωση θέσης με χρήση GPS αισθητήρα κινητού.</li>
-<li>CRUD λειτουργίες με αποθήκευση σε βάση δεδομένων.</li>
-<li>RESTful endpoints για διαχείριση: χρηστών, farms, sensors, measurements.</li>
+<li><code>POST /api/register</code> - Εγγραφή νέου χρήστη.</li>
+<li><code>POST /api/login</code> - Σύνδεση και λήψη authentication token.</li>
+<li><code>POST /api/logout</code> - Αποσύνδεση του συνδεδεμένου χρήστη.</li>
+<li><code>GET /api/user</code> - Λήψη στοιχείων του συνδεδεμένου χρήστη.</li>
+<li><code>PUT /api/user</code> - Ενημέρωση προφίλ χρήστη (π.χ. όνομα, email, κωδικός).</li>
+<li><code>DELETE /api/user</code> - Διαγραφή λογαριασμού χρήστη.</li>
 </ul>
-<p>Ενδεικτικά Endpoints:</p>
+<h4 id="farms">Farms </h4>
 <ul>
-<li>
-<ul>
-<li>POST /api/register</li>
+<li><code>GET /api/farms</code> - Λίστα όλων των αγροτεμαχίων του χρήστη.</li>
+<li><code>POST /api/farms</code> - Δημιουργία νέου αγροτεμαχίου.</li>
+<li><code>GET /api/farms/{farm}</code> - Προβολή συγκεκριμένου αγροτεμαχίου.</li>
+<li><code>PUT /api/farms/{farm}</code> - Ενημέρωση συγκεκριμένου αγροτεμαχίου.</li>
+<li><code>DELETE /api/farms/{farm}</code> - Διαγραφή συγκεκριμένου αγροτεμαχίου.</li>
+<li><code>GET /api/farms/{farm}/sensors</code> - Λίστα αισθητήρων για συγκεκριμένο αγροτεμάχιο.</li>
 </ul>
-</li>
-<li>
+<h4 id="sensors">Sensors </h4>
 <ul>
-<li>POST /api/login</li>
+<li><code>GET /api/sensors</code> - Λίστα όλων των αισθητήρων του χρήστη.</li>
+<li><code>POST /api/sensors</code> - Προσθήκη νέου αισθητήρα.</li>
+<li><code>POST /api/sensors/scan</code> - Δημιουργία ή ενημέρωση αισθητήρα μέσω QR code.</li>
+<li><code>GET /api/sensors/{sensor}</code> - Προβολή συγκεκριμένου αισθητήρα με τις μετρήσεις του.</li>
+<li><code>PUT /api/sensors/{sensor}</code> - Ενημέρωση συγκεκριμένου αισθητήρα.</li>
+<li><code>DELETE /api/sensors/{sensor}</code> - Διαγραφή συγκεκριμένου αισθητήρα.</li>
 </ul>
-</li>
-<li>
+<h4 id="measurements">Measurements </h4>
 <ul>
-<li>POST /api/farms</li>
+<li><code>POST /api/measurements</code> - Καταχώρηση μέτρησης από αισθητήρα.</li>
 </ul>
-</li>
-<li>
+<hr>
+<h3 id="42-δομή-βάσης-δεδομένων">4.2 Δομή Βάσης Δεδομένων </h3>
+<h4 id="users">Users </h4>
+<table>
+<thead>
+<tr>
+<th>Στήλη</th>
+<th>Τύπος</th>
+<th>Περιγραφή</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>BIGINT</td>
+<td>Πρωτεύον κλειδί</td>
+</tr>
+<tr>
+<td>name</td>
+<td>STRING</td>
+<td>Όνομα χρήστη</td>
+</tr>
+<tr>
+<td>email</td>
+<td>STRING</td>
+<td>Email χρήστη (μοναδικό)</td>
+</tr>
+<tr>
+<td>password</td>
+<td>STRING</td>
+<td>Κρυπτογραφημένος κωδικός</td>
+</tr>
+<tr>
+<td>email_verified_at</td>
+<td>TIMESTAMP</td>
+<td>Χρόνος επιβεβαίωσης email</td>
+</tr>
+<tr>
+<td>remember_token</td>
+<td>STRING</td>
+<td>Token για "remember me"</td>
+</tr>
+<tr>
+<td>timestamps</td>
+<td>TIMESTAMP</td>
+<td>Χρόνοι δημιουργίας/ενημέρωσης</td>
+</tr>
+</tbody>
+</table>
+<h4 id="farms-1">Farms </h4>
+<table>
+<thead>
+<tr>
+<th>Στήλη</th>
+<th>Τύπος</th>
+<th>Περιγραφή</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>BIGINT</td>
+<td>Πρωτεύον κλειδί</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>BIGINT</td>
+<td>Ξένο κλειδί προς τον πίνακα <code>users</code></td>
+</tr>
+<tr>
+<td>name</td>
+<td>STRING</td>
+<td>Όνομα αγροτεμαχίου</td>
+</tr>
+<tr>
+<td>coordinates</td>
+<td>JSON</td>
+<td>Συντεταγμένες GPS αγροτεμαχίου</td>
+</tr>
+<tr>
+<td>timestamps</td>
+<td>TIMESTAMP</td>
+<td>Χρόνοι δημιουργίας/ενημέρωσης</td>
+</tr>
+</tbody>
+</table>
+<h4 id="sensors-1">Sensors </h4>
+<table>
+<thead>
+<tr>
+<th>Στήλη</th>
+<th>Τύπος</th>
+<th>Περιγραφή</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>BIGINT</td>
+<td>Πρωτεύον κλειδί</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>BIGINT</td>
+<td>Ξένο κλειδί προς τον πίνακα <code>users</code></td>
+</tr>
+<tr>
+<td>farm_id</td>
+<td>BIGINT</td>
+<td>Ξένο κλειδί προς τον πίνακα <code>farms</code></td>
+</tr>
+<tr>
+<td>code</td>
+<td>STRING</td>
+<td>Μοναδικός κωδικός αισθητήρα</td>
+</tr>
+<tr>
+<td>lat</td>
+<td>DECIMAL</td>
+<td>Γεωγραφικό πλάτος αισθητήρα</td>
+</tr>
+<tr>
+<td>lon</td>
+<td>DECIMAL</td>
+<td>Γεωγραφικό μήκος αισθητήρα</td>
+</tr>
+<tr>
+<td>timestamps</td>
+<td>TIMESTAMP</td>
+<td>Χρόνοι δημιουργίας/ενημέρωσης</td>
+</tr>
+</tbody>
+</table>
+<h4 id="measurements-1">Measurements </h4>
+<table>
+<thead>
+<tr>
+<th>Στήλη</th>
+<th>Τύπος</th>
+<th>Περιγραφή</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>BIGINT</td>
+<td>Πρωτεύον κλειδί</td>
+</tr>
+<tr>
+<td>sensor_id</td>
+<td>BIGINT</td>
+<td>Ξένο κλειδί προς τον πίνακα <code>sensors</code></td>
+</tr>
+<tr>
+<td>humidity</td>
+<td>DECIMAL</td>
+<td>Τιμή υγρασίας (0-100%)</td>
+</tr>
+<tr>
+<td>timestamp</td>
+<td>TIMESTAMP</td>
+<td>Χρόνος μέτρησης</td>
+</tr>
+<tr>
+<td>timestamps</td>
+<td>TIMESTAMP</td>
+<td>Χρόνοι δημιουργίας/ενημέρωσης</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="5-τεχνολογίες-και-λειτουργίες-που-υλοποιεί-η-εφαρμογή">5. Τεχνολογίες και Λειτουργίες που Υλοποιεί η Εφαρμογή </h2>
+<p>Η εφαρμογή AgroSense υλοποιεί τις παρακάτω τεχνολογίες και λειτουργίες:</p>
+<h3 id="τεχνολογίες">Τεχνολογίες </h3>
 <ul>
-<li>POST /api/sensors/scan</li>
+<li><strong>Web Services (REST API):</strong> Επικοινωνία μεταξύ της εφαρμογής και του backend μέσω RESTful APIs.</li>
+<li><strong>Sensor Technology:</strong> Χρήση GPS της συσκευής για την καταγραφή γεωγραφικών δεδομένων.</li>
+<li><strong>QR Coding:</strong> Σάρωση αισθητήρων με χρήση κάμερας για την καταχώρηση και ενημέρωσή τους.</li>
+<li><strong>Access to Phone Resources:</strong> Πρόσβαση σε πόρους της συσκευής, όπως η κάμερα, για την υποστήριξη λειτουργιών  της εφαρμογής.</li>
 </ul>
-</li>
-<li>
+<h3 id="λειτουργίες">Λειτουργίες </h3>
 <ul>
-<li>POST /api/measurements</li>
-</ul>
-</li>
-</ul>
-<h2 id="5-υλοποίηση-τεχνολογιών-επιλογής">5. Υλοποίηση Τεχνολογιών Επιλογής </h2>
-<p>Υποστηρίζονται οι εξής τεχνολογίες:</p>
-<ul>
-<li>Web Services (REST API)</li>
-<li>Sensor Technology: GPS συσκευής</li>
-<li>QR Coding: σάρωση αισθητήρων με χρήση κάμερας</li>
-<li>Access to Phone Resources: πρόσβαση σε κάμερα κινητού</li>
+<li><strong>Συνδεσιμότητα στο Διαδίκτυο μέσω API:</strong> Επικοινωνία της εφαρμογής με το backend για την αποστολή και λήψη δεδομένων.</li>
+<li><strong>Επίγνωση Θέσης:</strong> Χρήση GPS για την καταγραφή γεωγραφικών αγροτεμαχίων.</li>
+<li><strong>CRUD Λειτουργίες:</strong> Δημιουργία, ανάγνωση, ενημέρωση και διαγραφή δεδομένων (χρηστών, αγροτεμαχίων, αισθητήρων, μετρήσεων).</li>
+<li><strong>Διαχείριση Αισθητήρων:</strong> Καταχώρηση αισθητήρων μέσω QR κωδικών και παρακολούθηση των δεδομένων τους.</li>
+<li><strong>Προβολή Δεδομένων:</strong> Εμφάνιση δεδομένων μέσω χαρτών και λιστών για εύκολη παρακολούθηση.</li>
+<li><strong>Διαχείριση Λογαριασμού Χρήστη:</strong> Δημιουργία, ενημέρωση και διαγραφή λογαριασμών χρηστών.</li>
 </ul>
 <h2 id="6-screenshots-εφαρμογής">6. Screenshots Εφαρμογής </h2>
 <p>Εικόνα 1 – Οθόνη Σύνδεσης<br>
@@ -112,11 +291,11 @@
 <h2 id="7-παραδείγματα-κώδικα-από-την-εφαρμογή">7. Παραδείγματα Κώδικα από την Εφαρμογή </h2>
 <p>Παρακάτω παρατίθενται σύνδεσμοι προς τα βασικά components της εφαρμογής στο GitHub repository:</p>
 <ul>
-<li><a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/shared/auth-service.js">Αντικείμενο Διαχείρισης Token</a></li>
-<li><a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Login.vue">Login Χρήστη</a></li>
-<li><a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Register.vue">Register Χρήστη</a></li>
-<li><a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Farm/AddFarm.vue">Προσθήκη Αγροτεμαχίου</a></li>
-<li><a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Sensor/AddSensor.vue">Προσθήκη Αισθητήρα</a></li>
+<li><a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/shared/auth-service.js">Αντικείμενο Διαχείρισης Token</a> (<a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/shared/auth-service.js">https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/shared/auth-service.js</a>)</li>
+<li><a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Login.vue">Login Χρήστη</a> (<a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Login.vue">https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Login.vue</a>)</li>
+<li><a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Register.vue">Register Χρήστη</a> (<a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Register.vue">https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Register.vue</a>)</li>
+<li><a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Farm/AddFarm.vue">Προσθήκη Αγροτεμαχίου</a> (<a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Farm/AddFarm.vue">https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Farm/AddFarm.vue</a>)</li>
+<li><a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Sensor/AddSensor.vue">Προσθήκη Αισθητήρα</a> (<a href="https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Sensor/AddSensor.vue">https://github.com/AgroSensePlatform/agrosenseApp/blob/main/app/components/Sensor/AddSensor.vue</a>)</li>
 </ul>
 <h2 id="8-παράδειγμα-σεναρίου-χρήσης">8. Παράδειγμα Σεναρίου Χρήσης </h2>
 <p>Ο Γιώργος είναι ένας νέος αγρότης που θέλει να παρακολουθεί την υγρασία του εδάφους στα χωράφια του ώστε να βελτιώσει την άρδευση και να μειώσει τη σπατάλη νερού.</p>
@@ -150,6 +329,62 @@
 Τέλος, ο Γιώργος μπορεί να επεξεργαστεί τα στοιχεία του λογαριασμού του και να αποσυνδεθεί με ασφάλεια.</p>
 </li>
 </ol>
+<h2 id="9-προτάσεις-για-μελλοντικές-βελτιώσεις">9. Προτάσεις για Μελλοντικές Βελτιώσεις </h2>
+<p>Η εφαρμογή AgroSense αποτελεί μια λειτουργική και επεκτάσιμη λύση για την καταγραφή και παρακολούθηση δεδομένων υγρασίας σε αγροτεμάχια μέσω κινητής συσκευής. Παρ’ όλα αυτά, υπάρχουν σημαντικές δυνατότητες για μελλοντικές επεκτάσεις και βελτιώσεις που θα ενισχύσουν τη λειτουργικότητα, την αποδοτικότητα και την εμπειρία χρήστη.</p>
+<p><strong>1. Υιοθέτηση βάσης δεδομένων InfluxDB για time-series δεδομένα</strong></p>
+<p>Στην τρέχουσα υλοποίηση, τα δεδομένα αποθηκεύονται σε MySQL. Ωστόσο, για την αποδοτική αποθήκευση και ανάλυση χρονικών σειρών δεδομένων όπως οι μετρήσεις υγρασίας, προτείνεται η ενσωμάτωση της <strong>InfluxDB</strong>, μιας βάσης δεδομένων βελτιστοποιημένης για time-series δεδομένα. Η χρήση της InfluxDB θα επιτρέψει:</p>
+<ul>
+<li>Άμεση αποθήκευση μετρήσεων με timestamps.</li>
+<li>Γρήγορη ανάκτηση ιστορικών δεδομένων ανά αισθητήρα.</li>
+<li>Ενσωματωμένες δυνατότητες επεξεργασίας δεδομένων (π.χ. μέσοι όροι, trends).</li>
+<li>Οπτικοποίηση μέσω εργαλείων όπως το Grafana.</li>
+</ul>
+<p><strong>2. Χρήση MQTT για τη Μετάδοση Δεδομένων Αισθητήρων</strong></p>
+<p>Αντί οι αισθητήρες να στέλνουν δεδομένα απευθείας στο backend μέσω HTTP, μπορεί να χρησιμοποιηθεί το πρωτόκολλο <strong>MQTT</strong> για την ελαφριά και αξιόπιστη μετάδοση δεδομένων. Οι αισθητήρες θα δημοσιεύουν σε έναν MQTT broker και:</p>
+<ul>
+<li>Το backend θα λειτουργεί ως subscriber για σκοπούς αποθήκευσης και ανάλυσης.</li>
+<li>Η Android εφαρμογή θα λαμβάνει ως subscriber τα δεδομένα σε πραγματικό χρόνο.</li>
+<li>Η βάση InfluxDB θα ενημερώνεται αυτόματα μέσω κάποιου service που και αυτο θα ειναι  subscriber στο καναλι του mqtt broker.</li>
+</ul>
+<p>Αυτό το μοντέλο μειώνει το φορτίο του backend και προσφέρει real-time ροή δεδομένων με χαμηλή κατανάλωση πόρων.</p>
+<p><strong>3. Ονομασία Αισθητήρων</strong></p>
+<p>Προτείνεται η δυνατότητα προαιρετικής ονομασίας κάθε αισθητήρα από τον χρήστη. Για παράδειγμα: “Αισθητήρας Βόρειας Πλευράς”. Αυτό προσφέρει καλύτερη αναγνωσιμότητα και ευκολία στη διαχείριση αισθητήρων σε αγροκτήματα με πολλαπλά σημεία παρακολούθησης.</p>
+<p><strong>4. Συσχέτιση Καλλιεργήσιμου Είδους με Αγροτεμάχια και Αισθητήρες</strong></p>
+<p>Κάθε αγροτεμάχιο θα μπορούσε να έχει καθορισμένο <strong>καλλιεργήσιμο είδος</strong> (π.χ. βαμβάκι, ελιές), το οποίο θα περιλαμβάνει προκαθορισμένα όρια υγρασίας. Σε αγροκτήματα με μικτές καλλιέργειες, το καλλιεργήσιμο είδος θα μπορούσε να ορίζεται ξεχωριστά για κάθε αισθητήρα. Με αυτό τον τρόπο, η εφαρμογή θα μπορεί να παρέχει στοχευμένες ειδοποιήσεις ή συστάσεις.</p>
+<p><strong>5. Δημιουργία Web Dashboard</strong></p>
+<p>Προτείνεται η ανάπτυξη μιας πλήρους  web εφαρμογής (dashboard) για χρήση από υπολογιστή, χρησιμοποιώντας το υπάρχον Laravel backend. Το dashboard θα προσφέρει:</p>
+<ul>
+<li>Διαδραστικούς χάρτες και γραφήματα.</li>
+<li>Επεξεργασία αγροτεμαχίων, αισθητήρων και καλλιεργειών.</li>
+<li>Ρυθμίσεις ειδοποιήσεων και παρακολούθηση ιστορικών δεδομένων.</li>
+<li>Υποστήριξη για αγρότες με μεγαλύτερες υποδομές ή πολλαπλές εκμεταλλεύσεις.</li>
+</ul>
+<p><strong>6. Βελτίωση Ασφάλειας στη Μετάδοση Δεδομένων από Αισθητήρες</strong></p>
+<p>Στην τρέχουσα υλοποίηση, οι αισθητήρες αποστέλλουν δεδομένα στο backend χρησιμοποιώντας μόνο τον μοναδικό κωδικό τους, ο οποίος είναι φανερός. Αυτό δημιουργεί ένα κενό ασφαλείας, καθώς κάποιος κακόβουλος χρήστης θα μπορούσε να υποκλέψει τον κωδικό και να αποστείλει ψευδή δεδομένα.</p>
+<p>Προτείνεται η υλοποίηση ενός συστήματος ασφαλούς αυθεντικοποίησης αισθητήρων, το οποίο θα περιλαμβάνει τα εξής βήματα:</p>
+<ol>
+<li>
+<p><strong>Αίτηση Token από τον Αισθητήρα:</strong></p>
+<ul>
+<li>Ο αισθητήρας, κατά την αρχική του ενεργοποίηση, θα αιτείται ένα μοναδικό token από το backend.</li>
+<li>Το token αυτό θα αποθηκεύεται στη μνήμη του αισθητήρα και θα χρησιμοποιείται για όλες τις μελλοντικές επικοινωνίες.</li>
+</ul>
+</li>
+<li>
+<p><strong>Έγκριση Token από τον Χρήστη:</strong></p>
+<ul>
+<li>Το backend θα αποστέλλει μια ειδοποίηση (notification) στον χρήστη, ζητώντας την έγκρισή του για την απόδοση του token στον αισθητήρα.</li>
+<li>Ο χρήστης θα μπορεί να εγκρίνει ή να απορρίψει την αίτηση μέσω της εφαρμογής.</li>
+</ul>
+</li>
+<li>
+<p><strong>Επαλήθευση Token:</strong></p>
+<ul>
+<li>Κάθε φορά που ο αισθητήρας αποστέλλει δεδομένα, το backend θα επαληθεύει το token για να διασφαλίσει ότι τα δεδομένα προέρχονται από εξουσιοδοτημένη συσκευή.</li>
+</ul>
+</li>
+</ol>
+<p>Αυτό το σύστημα θα ενισχύσει την ασφάλεια της εφαρμογής, αποτρέποντας μη εξουσιοδοτημένη πρόσβαση και διασφαλίζοντας την ακεραιότητα των δεδομένων που αποστέλλονται από τους αισθητήρες.</p>
 
       </div>
       
